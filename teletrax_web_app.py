@@ -9,9 +9,13 @@ import threading
 import markdown
 import re
 import numpy as np
+import time
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, make_response
 from werkzeug.utils import secure_filename
 from litellm_client import LiteLLMClient
+
+# Load environment variables from .env file
+import load_env
 
 # Import the analysis functions from teletrax_analysis.py
 import teletrax_analysis
@@ -1213,9 +1217,12 @@ def generate_ai_analysis(session_id, channel_name):
             }
             
             # Initialize the LiteLLM client
-            # Use the API key from environment variable or hardcoded for testing
-            api_key = os.environ.get('LITELLM_API_KEY', 'sk-zjylJDR1YWfb8GlmGWvkBA')
+            # Use the API key from environment variable
+            api_key = os.environ.get('LITELLM_API_KEY')
             api_url = os.environ.get('LITELLM_API_URL', 'https://litellm.int.thomsonreuters.com')
+            
+            if not api_key:
+                raise ValueError("LITELLM_API_KEY environment variable is not set. Please set it in your .env file.")
             
             litellm_client = LiteLLMClient(api_key=api_key, api_url=api_url)
             

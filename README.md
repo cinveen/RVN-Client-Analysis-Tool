@@ -97,8 +97,16 @@ cd rvn-client-analysis
 
 2. Install the required packages:
 ```
-pip install pandas matplotlib plotly python-pptx flask openpyxl
+pip install pandas matplotlib plotly python-pptx flask openpyxl python-dotenv
 ```
+
+3. Set up environment variables:
+   - Create a `.env` file in the root directory based on the provided `.env.example`
+   - Add your LiteLLM API key to the `.env` file:
+   ```
+   LITELLM_API_KEY=your_api_key_here
+   LITELLM_API_URL=https://litellm.int.thomsonreuters.com
+   ```
 
 ## Usage
 

@@ -12,6 +12,9 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 
+# Load environment variables from .env file
+import load_env
+
 # Thomson Reuters brand colors
 TR_ORANGE = '#D64000'
 TR_RACING_GREEN = '#123015'
@@ -114,7 +117,12 @@ for col in datetime_cols:
 
 # Convert 'Actual detection length' to seconds for easier analysis
 def timedelta_to_seconds(td):
-    return td.total_seconds()
+    if isinstance(td, timedelta):
+        return td.total_seconds()
+    elif isinstance(td, (int, float)):
+        return float(td)
+    else:
+        return 0.0
 
 df['Detection Length (seconds)'] = df['Actual detection length'].apply(timedelta_to_seconds)
 
@@ -1100,8 +1108,11 @@ def create_single_slide_presentation(channel_name, output_dir='output', client_f
             from litellm_client import LiteLLMClient
             
             # Initialize the LiteLLM client
-            api_key = os.environ.get('LITELLM_API_KEY', 'sk-zjylJDR1YWfb8GlmGWvkBA')
+            api_key = os.environ.get('LITELLM_API_KEY')
             api_url = os.environ.get('LITELLM_API_URL', 'https://litellm.int.thomsonreuters.com')
+            
+            if not api_key:
+                raise ValueError("LITELLM_API_KEY environment variable is not set. Please set it in your .env file.")
             
             litellm_client = LiteLLMClient(api_key=api_key, api_url=api_url)
             
@@ -1392,8 +1403,11 @@ Remember:
             from litellm_client import LiteLLMClient
             
             # Initialize the LiteLLM client
-            api_key = os.environ.get('LITELLM_API_KEY', 'sk-zjylJDR1YWfb8GlmGWvkBA')
+            api_key = os.environ.get('LITELLM_API_KEY')
             api_url = os.environ.get('LITELLM_API_URL', 'https://litellm.int.thomsonreuters.com')
+            
+            if not api_key:
+                raise ValueError("LITELLM_API_KEY environment variable is not set. Please set it in your .env file.")
             
             # Prepare data for LiteLLM
             # Calculate some key statistics for the prompt

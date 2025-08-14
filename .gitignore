@@ -42,3 +42,8 @@ site/
 *.tmp
 *.bak
 *.log
+
+# Environment variables
+.env
+.env.*
+!.env.example
