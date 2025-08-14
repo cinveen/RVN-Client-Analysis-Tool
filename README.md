@@ -175,6 +175,7 @@ The tool provides the following types of analysis:
    - **Audience-Specific Insights**: Tailored for journalists, editors, and marketing teams
    - **Insight Categories**: Content strategy, client engagement, and market positioning
    - **Actionable Recommendations**: Specific suggestions based on data patterns
+   - **All Channels Analysis**: Holistic analysis across all channels with cross-channel comparisons
 
 ## Single-Slide PowerPoint Feature
 
@@ -245,10 +246,19 @@ The AI-powered analysis feature uses Claude Sonnet 4 to generate detailed insigh
 In the web interface:
 1. Navigate to the "Available Analyses" section
 2. Find the "AI-Powered Insights" card
-3. Select a channel from the dropdown and click "Generate"
+3. Select a channel from the dropdown (or choose "All Channels" for a holistic analysis) and click "Generate"
 4. The system will process the data and generate the AI analysis
 5. View the analysis organized by audience and insight type
 6. Download the analysis as a PDF if needed
+
+#### All Channels Analysis
+
+The "All Channels" option provides a comprehensive analysis across all channels in your dataset:
+- Identifies patterns and trends that span multiple channels
+- Compares content preferences between different channels
+- Highlights opportunities for cross-channel content strategies
+- Provides insights that might not be apparent when looking at individual channels
+- Offers recommendations that consider the entire content ecosystem
 
 ## Output
 

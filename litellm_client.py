@@ -58,7 +58,7 @@ class LiteLLMClient:
                 {"role": "user", "content": prompt["user"]}
             ],
             "temperature": 0.3,  # Lower temperature for more factual responses
-            "max_tokens": 8000   # Increased to ensure we get the full response
+            "max_tokens": 15000  # Increased to prevent truncation of analysis
         }
         
         # Make the API request with retries
@@ -145,7 +145,28 @@ Your analysis should be structured in the following way:
         data_summary = self._create_data_summary(teletrax_data, channel_name)
         
         # User prompt with the data summary
-        user_prompt = f"""
+        if channel_name == "All Channels":
+            user_prompt = f"""
+Please analyze the following Teletrax data across all channels and provide detailed insights and recommendations. This analysis should look at the data holistically, comparing and contrasting usage patterns between different channels while also identifying overall trends.
+
+{data_summary}
+
+Based on this data, please provide:
+1. An executive summary of key findings across all channels
+2. Insights categorized by audience (journalists/producers, output editors, marketing/client-facing teams)
+3. Insights categorized by type (content strategy, client engagement, market positioning)
+4. Specific, actionable recommendations for Reuters teams
+
+Please be as detailed and specific as possible in your analysis, focusing on:
+- Patterns and trends across all channels
+- Differences in content preferences between channels
+- Opportunities for cross-channel content strategies
+- Regional and thematic insights that emerge when looking at all channels together
+
+This should be a holistic analysis that considers all channels together, not separate analyses for each channel.
+"""
+        else:
+            user_prompt = f"""
 Please analyze the following Teletrax data for the channel {channel_name} and provide detailed insights and recommendations.
 
 {data_summary}
@@ -211,6 +232,24 @@ TOP STORIES:
         if 'country_distribution' in teletrax_data:
             countries_text = "\n".join([f"- {country}: {percentage}%" for country, percentage in teletrax_data['country_distribution'].items()])
             summary += f"\nGEOGRAPHIC DISTRIBUTION:\n{countries_text}\n"
+        
+        # Add channel comparison data if available (for "All Channels" analysis)
+        if 'channel_comparison' in teletrax_data:
+            channel_comp = teletrax_data['channel_comparison']
+            
+            # Add channel counts
+            if 'channel_counts' in channel_comp:
+                summary += f"\nCHANNEL DISTRIBUTION:\n"
+                channel_counts_text = "\n".join([f"- {ch}: {count} detections" for ch, count in channel_comp['channel_counts'].items()])
+                summary += f"{channel_counts_text}\n"
+            
+            # Add channel-specific story preferences
+            if 'channel_story_preferences' in channel_comp:
+                summary += f"\nCHANNEL-SPECIFIC STORY PREFERENCES:\n"
+                for ch, stories in channel_comp['channel_story_preferences'].items():
+                    summary += f"\n{ch} Top Stories:\n"
+                    ch_stories_text = "\n".join([f"  - {story}: {count} detections" for story, count in stories.items()])
+                    summary += f"{ch_stories_text}\n"
         
         return summary
     

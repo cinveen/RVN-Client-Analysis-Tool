@@ -169,6 +169,7 @@
                                         <div class="input-group mb-3">
                                             <select class="form-select" id="aiChannelSelect">
                                                 <option selected>Select channel...</option>
+                                                <option value="All Channels">All Channels</option>
                                                 {% for channel in stats.channels.split(', ') %}
                                                     <option value="{{ channel }}">{{ channel }}</option>
                                                 {% endfor %}

@@ -6,6 +6,35 @@ This document provides a chronological list of recent updates, enhancements, and
 
 ### August 14, 2025
 
+#### All Channels AI Analysis Feature
+
+- **New Feature**: Added "All Channels" option to the AI analysis dropdown
+- **Enhancement**: Enables holistic analysis across all channels in a single report
+- **Technical Details**:
+  - Modified the AI analysis generation to handle multi-channel data
+  - Enhanced the LiteLLM prompt to focus on cross-channel comparisons and trends
+  - Added channel comparison data to the AI input, including channel counts and channel-specific story preferences
+  - Updated the UI to include "All Channels" as the first option in the dropdown
+- **Impact**: Users can now generate comprehensive insights that span across all channels, identifying patterns that might not be apparent when analyzing channels individually
+- **User Experience**: Provides a holistic view of content performance across the entire ecosystem, with specific focus on:
+  - Patterns and trends that span multiple channels
+  - Differences in content preferences between channels
+  - Opportunities for cross-channel content strategies
+  - Regional and thematic insights that emerge when looking at all channels together
+
+#### Environment Variable System for API Keys
+
+- **Security Enhancement**: Implemented a more secure approach for handling API keys
+- **Technical Details**:
+  - Created a `load_env.py` module that loads environment variables from a `.env` file
+  - Updated both `teletrax_web_app.py` and `teletrax_analysis.py` to import this module
+  - Added `.env.example` file to show the required format without exposing actual credentials
+- **Impact**: API keys are now stored in a separate `.env` file which is excluded from version control
+- **Security Benefits**:
+  - Keeps sensitive credentials out of source code
+  - Prevents accidental exposure through version control
+  - Makes it easier to use different credentials in different environments
+
 #### Client-Friendly Slide Generation with LiteLLM Integration
 
 - **New Feature**: Added client-friendly slide generation option for PowerPoint presentations

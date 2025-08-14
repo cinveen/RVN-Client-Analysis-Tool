@@ -1113,8 +1113,14 @@ def generate_ai_analysis(session_id, channel_name):
             # Load the data
             df = pd.read_pickle(processed_file)
             
-            # Filter data for the specific channel
-            channel_df = df[df['Channel: Name'] == channel_name]
+            # Handle "All Channels" option or filter for a specific channel
+            if channel_name == "All Channels":
+                channel_df = df  # Use all data
+                display_name = "All Channels"
+            else:
+                # Filter data for the specific channel
+                channel_df = df[df['Channel: Name'] == channel_name]
+                display_name = channel_name
             
             if len(channel_df) == 0:
                 raise ValueError(f"No data found for channel {channel_name}")
@@ -1216,6 +1222,24 @@ def generate_ai_analysis(session_id, channel_name):
                 'country_distribution': country_distribution
             }
             
+            # For "All Channels" analysis, add channel comparison data
+            if channel_name == "All Channels":
+                # Get channel counts
+                channel_counts = df['Channel: Name'].value_counts().to_dict()
+                
+                # Get channel-specific story preferences
+                channel_story_preferences = {}
+                for ch in df['Channel: Name'].unique():
+                    ch_df = df[df['Channel: Name'] == ch]
+                    ch_top_stories = ch_df['Slug line'].value_counts().head(5).to_dict()
+                    channel_story_preferences[ch] = ch_top_stories
+                
+                # Add channel comparison data to teletrax_data
+                teletrax_data['channel_comparison'] = {
+                    'channel_counts': channel_counts,
+                    'channel_story_preferences': channel_story_preferences
+                }
+            
             # Initialize the LiteLLM client
             # Use the API key from environment variable
             api_key = os.environ.get('LITELLM_API_KEY')
@@ -1227,7 +1251,7 @@ def generate_ai_analysis(session_id, channel_name):
             litellm_client = LiteLLMClient(api_key=api_key, api_url=api_url)
             
             # Generate the analysis
-            analysis = litellm_client.generate_analysis(teletrax_data, channel_name)
+            analysis = litellm_client.generate_analysis(teletrax_data, display_name)
             
             # Save the analysis to a file
             with open(analysis_file, 'w') as f:
