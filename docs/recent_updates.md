@@ -6,6 +6,18 @@ This document provides a chronological list of recent updates, enhancements, and
 
 ### August 14, 2025
 
+#### AI Analysis ADVISORY Prefix Handling Fix
+
+- **Bug Fix**: Fixed an issue where the AI analysis was treating "ADVISORY" as a content category rather than recognizing it as a prefix for live broadcasts
+- **Enhancement**: Updated the system prompt in the LiteLLM client to explicitly explain that "ADVISORY" indicates a live broadcast
+- **Technical Details**:
+  - Added clear explanation in the system prompt that "ADVISORY" is synonymous with "LIVE:" and not a content category
+  - Enhanced data normalization in `teletrax_web_app.py` to consistently replace "ADVISORY" with "LIVE:" in data sent to the AI model
+  - Ensured consistent handling of the prefix across all parts of the analysis pipeline
+- **Impact**: AI-generated insights and recommendations now correctly interpret "ADVISORY" content as live broadcasts rather than treating it as a separate content category
+- **User Experience**: Eliminates confusing recommendations about "expanding advisory content production" when the AI was actually referring to live broadcasts
+
+
 #### All Channels AI Analysis Feature
 
 - **New Feature**: Added "All Channels" option to the AI analysis dropdown

@@ -1156,7 +1156,29 @@ def generate_ai_analysis(session_id, channel_name):
                     # If no slash is found, return the entire slug line
                     return slug_line
             
+            # Apply the master slug extraction to the channel data
             channel_df['Master Slug'] = channel_df['Slug line'].apply(extract_master_slug)
+            
+            # Also normalize the original slug lines to replace ADVISORY with LIVE:
+            # This ensures consistency in the data sent to the AI model
+            def normalize_slug_line(slug_line):
+                if pd.isna(slug_line):
+                    return slug_line
+                
+                if isinstance(slug_line, str) and slug_line.startswith("ADVISORY "):
+                    return "LIVE: " + slug_line[9:].strip()
+                return slug_line
+            
+            # Create a normalized version of the top stories with ADVISORY replaced by LIVE:
+            normalized_top_stories = {}
+            for slug, count in teletrax_data.get('top_stories', {}).items():
+                normalized_slug = normalize_slug_line(slug)
+                normalized_top_stories[normalized_slug] = count
+            
+            # Replace the original top stories with the normalized version
+            teletrax_data['top_stories'] = normalized_top_stories
+            
+            # Get the top themes
             top_themes = channel_df['Master Slug'].value_counts().head(10).to_dict()
             
             # Get detection patterns

@@ -116,6 +116,9 @@ How Teletrax Works:
    • Captures key metadata, such as airtime, program context, and geographic distribution.
    • Provides insights into client engagement, content performance, and potential underutilization.
 
+Important Reuters Content Terminology:
+• "ADVISORY" prefix: When you see "ADVISORY" at the beginning of a slug line or headline, this indicates a LIVE broadcast. It is NOT a content category or type. In the data processing, "ADVISORY" is replaced with "LIVE:" for clarity. For example, "ADVISORY USA-ELECTION/" and "LIVE: USA-ELECTION/" refer to the same content - a live broadcast of election coverage. Do not treat "ADVISORY" content as a separate category in your analysis or recommendations.
+
 Why Reuters Uses Teletrax:
 • Client Engagement: Understand how broadcast and digital partners are using Reuters content.
 • Performance Metrics: Identify the most and least-used stories to optimize future coverage.
