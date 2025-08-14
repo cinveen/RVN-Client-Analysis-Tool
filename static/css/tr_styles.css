@@ -1,0 +1,299 @@
+/* Thomson Reuters Brand Colors */
+
+/* Logo Styles */
+.logo-container {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.tr-logo {
+    height: 60px;
+    width: auto;
+}
+
+.tr-logo-footer {
+    height: 24px;
+    width: auto;
+    margin-right: 1rem;
+}
+
+.footer-content {
+    display: flex;
+    align-items: center;
+}
+
+/* Font Face Declarations for Reuters Clario */
+@font-face {
+    font-family: 'Clario';
+    src: url('../fonts/Clario-Regular.woff2') format('woff2'),
+         url('../fonts/Clario-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Clario';
+    src: url('../fonts/Clario-Medium.woff2') format('woff2'),
+         url('../fonts/Clario-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Clario';
+    src: url('../fonts/Clario-Bold.woff2') format('woff2'),
+         url('../fonts/Clario-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Clario';
+    src: url('../fonts/Clario-Light.woff2') format('woff2'),
+         url('../fonts/Clario-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Clario';
+    src: url('../fonts/Clario-Black.woff2') format('woff2'),
+         url('../fonts/Clario-Black.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Clario';
+    src: url('../fonts/Clario-Thin.woff2') format('woff2'),
+         url('../fonts/Clario-Thin.woff') format('woff');
+    font-weight: 200;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Clario';
+    src: url('../fonts/Clario-Air.woff2') format('woff2'),
+         url('../fonts/Clario-Air.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+}
+
+/* Primary Colors */
+:root {
+    /* Primary Colors */
+    --tr-orange: #D64000;
+    --tr-racing-green: #123015;
+    --tr-white: #FFFFFF;
+    
+    /* Secondary Colors - Sky Pair (chosen for data visualization) */
+    --tr-light-sky: #E3F1FD;
+    --tr-dark-sky: #0874E3;
+    
+    /* Additional Secondary Colors for specific uses */
+    --tr-light-gold: #FCF2DA;
+    --tr-dark-gold: #E9B045;
+    --tr-light-amber: #F8EADD;
+    --tr-dark-amber: #D4792A;
+    --tr-light-teal: #E3F3EE;
+    --tr-dark-teal: #4DB299;
+    --tr-light-lime: #E1F4CD;
+    --tr-dark-lime: #8FCB64;
+}
+
+/* Typography Variables */
+:root {
+    /* Base font size */
+    --base-font-size: 16px;
+    
+    /* Font size multipliers based on hierarchy */
+    --eyebrow-size: calc(var(--base-font-size) * 1.5);
+    --xl-headline-size: calc(var(--base-font-size) * 8);
+    --headline1-size: calc(var(--base-font-size) * 6);
+    --headline2-size: calc(var(--base-font-size) * 3);
+    --subhead-size: calc(var(--base-font-size) * 2);
+    
+    /* Line heights based on font size */
+    --small-line-height: 120%;
+    --medium-line-height: 112.5%;
+    --large-line-height: 100%;
+}
+
+/* General Styles */
+body {
+    background-color: var(--tr-white);
+    color: var(--tr-racing-green);
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 400; /* Regular weight for body copy */
+    font-size: var(--base-font-size);
+    line-height: var(--small-line-height);
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    text-align: left; /* Always left-aligned per style guide */
+}
+
+.header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--tr-racing-green);
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    color: var(--tr-orange);
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 500; /* Medium weight for headlines */
+    font-size: var(--headline1-size);
+    line-height: var(--large-line-height);
+    letter-spacing: -0.01em; /* -1% tracking per style guide */
+}
+
+.header .lead {
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 400; /* Regular weight for subheads */
+    font-size: var(--subhead-size);
+    line-height: var(--small-line-height);
+}
+
+.footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--tr-racing-green);
+    margin-top: 2rem;
+    color: var(--tr-racing-green);
+}
+
+/* Card Styles */
+.card {
+    border-color: var(--tr-racing-green);
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 500; /* Medium weight for headlines */
+    font-size: var(--subhead-size);
+    line-height: var(--small-line-height);
+}
+
+.card-text {
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 400; /* Regular weight for body copy */
+    line-height: var(--small-line-height);
+}
+
+.card-header {
+    background-color: var(--tr-racing-green);
+    color: var(--tr-white);
+}
+
+.card-body {
+    background-color: var(--tr-light-sky);
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: var(--tr-orange);
+    border-color: var(--tr-orange);
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+    background-color: var(--tr-dark-amber) !important;
+    border-color: var(--tr-dark-amber) !important;
+}
+
+.btn-success {
+    background-color: var(--tr-racing-green);
+    border-color: var(--tr-racing-green);
+}
+
+.btn-success:hover, .btn-success:focus, .btn-success:active {
+    background-color: #1a4620 !important;
+    border-color: #1a4620 !important;
+}
+
+.btn-secondary {
+    background-color: var(--tr-dark-sky);
+    border-color: var(--tr-dark-sky);
+}
+
+.btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active {
+    background-color: #0666c9 !important;
+    border-color: #0666c9 !important;
+}
+
+.btn-outline-primary {
+    color: var(--tr-orange);
+    border-color: var(--tr-orange);
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
+    background-color: var(--tr-orange) !important;
+    border-color: var(--tr-orange) !important;
+    color: var(--tr-white) !important;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 400; /* Regular weight for form inputs */
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--tr-orange);
+    box-shadow: 0 0 0 0.25rem rgba(214, 64, 0, 0.25);
+}
+
+.form-label {
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 500; /* Medium weight for labels */
+}
+
+/* Alert Styles */
+.alert-warning {
+    background-color: var(--tr-light-gold);
+    border-color: var(--tr-dark-gold);
+    color: var(--tr-racing-green);
+}
+
+/* Analysis Image */
+.analysis-image {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--tr-racing-green);
+}
+
+/* Additional Typography Classes */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 500; /* Medium weight for all headings */
+}
+
+h1 {
+    font-size: var(--headline1-size);
+    line-height: var(--large-line-height);
+    letter-spacing: -0.01em; /* -1% tracking per style guide */
+}
+
+h2 {
+    font-size: var(--headline2-size);
+    line-height: var(--medium-line-height);
+}
+
+h3 {
+    font-size: var(--subhead-size);
+    line-height: var(--small-line-height);
+}
+
+.btn {
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 500; /* Medium weight for buttons */
+}
+
+strong, b {
+    font-weight: 500; /* Medium weight instead of bold for emphasis */
+}
+
+/* Avoid italics, underlines, and all caps per style guide */
+em, i, u {
+    font-style: normal;
+    text-decoration: none;
+}

@@ -1,0 +1,236 @@
+/* Reuters Teletrax Analysis Tool Documentation - Custom Styles */
+
+:root {
+    /* Primary Colors */
+    --tr-orange: #D64000;
+    --tr-racing-green: #123015;
+    --tr-white: #FFFFFF;
+    
+    /* Secondary Colors - Sky Pair */
+    --tr-sky-light: #E3F1FD;
+    --tr-sky-dark: #0874E3;
+    
+    /* Secondary Colors - Grass Pair */
+    --tr-grass-light: #E5F4E7;
+    --tr-grass-dark: #1D8C29;
+    
+    /* Secondary Colors - Sand Pair */
+    --tr-sand-light: #FFF5E5;
+    --tr-sand-dark: #FF9D28;
+    
+    /* Secondary Colors - Clay Pair */
+    --tr-clay-light: #FFEAE5;
+    --tr-clay-dark: #D64000;
+    
+    /* Text Colors */
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --text-tertiary: #999999;
+}
+
+/* Override Material theme colors with Reuters branding */
+[data-md-color-scheme="default"] {
+    --md-primary-fg-color: var(--tr-orange);
+    --md-primary-fg-color--light: var(--tr-clay-light);
+    --md-primary-fg-color--dark: #B53600;
+    --md-accent-fg-color: var(--tr-sky-dark);
+    --md-typeset-a-color: var(--tr-sky-dark);
+}
+
+/* Typography */
+@font-face {
+    font-family: 'Clario';
+    src: url('../../static/fonts/Clario-Regular.woff2') format('woff2'),
+         url('../../static/fonts/Clario-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Clario';
+    src: url('../../static/fonts/Clario-Medium.woff2') format('woff2'),
+         url('../../static/fonts/Clario-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Clario';
+    src: url('../../static/fonts/Clario-Bold.woff2') format('woff2'),
+         url('../../static/fonts/Clario-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Apply Clario font to all text */
+body,
+input {
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 400;
+}
+
+/* Apply Clario Medium to headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Clario', Arial, sans-serif;
+    font-weight: 500;
+}
+
+/* Header */
+.md-header {
+    background-color: var(--tr-orange);
+    color: var(--tr-white);
+}
+
+.md-header-nav__button.md-logo img {
+    height: 2rem;
+}
+
+/* Navigation */
+.md-nav__title {
+    color: var(--tr-racing-green);
+}
+
+.md-nav__link:focus,
+.md-nav__link:hover {
+    color: var(--tr-orange);
+}
+
+.md-nav__link--active {
+    color: var(--tr-orange);
+    font-weight: 500;
+}
+
+/* Content */
+.md-content {
+    background-color: var(--tr-white);
+}
+
+.md-content__inner {
+    padding: 1.2rem;
+}
+
+/* Code blocks */
+.md-typeset code {
+    background-color: var(--tr-sky-light);
+    color: var(--tr-racing-green);
+}
+
+.md-typeset pre {
+    background-color: var(--tr-racing-green);
+    color: var(--tr-white);
+}
+
+/* Tables */
+.md-typeset table:not([class]) {
+    border: 1px solid #E0E0E0;
+}
+
+.md-typeset table:not([class]) th {
+    background-color: var(--tr-racing-green);
+    color: var(--tr-white);
+}
+
+.md-typeset table:not([class]) tr:nth-child(odd) {
+    background-color: var(--tr-white);
+}
+
+.md-typeset table:not([class]) tr:nth-child(even) {
+    background-color: var(--tr-sky-light);
+}
+
+/* Admonitions */
+.md-typeset .admonition {
+    border-left: 0.4rem solid var(--tr-orange);
+}
+
+.md-typeset .admonition.note {
+    border-left-color: var(--tr-sky-dark);
+}
+
+.md-typeset .admonition.tip {
+    border-left-color: var(--tr-grass-dark);
+}
+
+.md-typeset .admonition.warning {
+    border-left-color: var(--tr-sand-dark);
+}
+
+.md-typeset .admonition.danger {
+    border-left-color: var(--tr-clay-dark);
+}
+
+/* Footer */
+.md-footer {
+    background-color: var(--tr-racing-green);
+}
+
+.md-footer-nav {
+    background-color: var(--tr-racing-green);
+}
+
+.md-footer-meta {
+    background-color: #0A1D0C;
+}
+
+/* Search */
+.md-search__input {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.md-search__input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Buttons */
+.md-typeset .md-button {
+    background-color: var(--tr-orange);
+    color: var(--tr-white);
+    border: none;
+}
+
+.md-typeset .md-button:hover {
+    background-color: #B53600;
+    color: var(--tr-white);
+}
+
+.md-typeset .md-button--secondary {
+    background-color: var(--tr-white);
+    color: var(--tr-orange);
+    border: 1px solid var(--tr-orange);
+}
+
+.md-typeset .md-button--secondary:hover {
+    background-color: var(--tr-clay-light);
+    color: var(--tr-orange);
+}
+
+/* Tabs */
+.md-tabs {
+    background-color: #B53600;
+}
+
+.md-tabs__link {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.md-tabs__link--active {
+    color: var(--tr-white);
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 76.1875em) {
+    .md-nav--primary .md-nav__title {
+        background-color: var(--tr-orange);
+        color: var(--tr-white);
+    }
+}
+
+@media screen and (max-width: 59.9375em) {
+    .md-nav__source {
+        background-color: #B53600;
+    }
+}

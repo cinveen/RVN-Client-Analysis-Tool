@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RVN Client Analysis</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tr_styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/logos/tr_pri_logo_rgb_color.png') }}" alt="Thomson Reuters Logo" class="tr-logo">
+            </div>
+            <h1>RVN Client Analysis Tool</h1>
+            <p class="lead">Analysis Dashboard</p>
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-warning">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Data Overview</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Dataset Statistics</h5>
+                                <ul>
+                                    <li><strong>Total Records:</strong> {{ stats.total_records }}</li>
+                                    <li><strong>Date Range:</strong> {{ stats.date_range }}</li>
+                                    <li><strong>Channels:</strong> {{ stats.channels }}</li>
+                                    <li><strong>Markets:</strong> {{ stats.markets }}</li>
+                                    <li><strong>Unique Stories:</strong> {{ stats.unique_stories }}</li>
+                                    <li><strong>Unique Story IDs:</strong> {{ stats.unique_story_ids }}</li>
+                                </ul>
+                                
+                                {% if file_info %}
+                                <h5 class="mt-4">Processed Files</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Status</th>
+                                                <th>Records</th>
+                                                <th>Channels</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for file in file_info %}
+                                            <tr>
+                                                <td>{{ file.filename }}</td>
+                                                <td>
+                                                    {% if file.status == 'success' %}
+                                                    <span class="badge bg-success">Success</span>
+                                                    {% else %}
+                                                    <span class="badge bg-danger">Error</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ file.records if file.status == 'success' else '-' }}</td>
+                                                <td>{{ file.channels if file.status == 'success' else file.message }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Top 5 Stories</h5>
+                                <ul>
+                                    {% for story, count in top_stories.items() %}
+                                        <li><strong>{{ story }}:</strong> {{ count }} detections</li>
+                                    {% endfor %}
+                                </ul>
+                                <p class="mt-3"><small>Note: For more detailed story information including Story IDs and Headlines, use the "Top Stories Analysis" option below.</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Available Analyses</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Time Series Analysis</h5>
+                                        <p class="card-text">Analyze detection trends over time</p>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='time_series', session_id=session_id) }}" class="btn btn-primary">Generate</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Top Stories Analysis</h5>
+                                        <p class="card-text">Identify the most frequently detected stories</p>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='top_stories', session_id=session_id) }}" class="btn btn-primary">Generate</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Detection Patterns</h5>
+                                        <p class="card-text">Analyze patterns by hour of day and day of week</p>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='detection_patterns', session_id=session_id) }}" class="btn btn-primary">Generate</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Top Themes</h5>
+                                        <p class="card-text">Identify the most frequently covered thematic areas based on master slugs</p>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='top_themes', session_id=session_id) }}" class="btn btn-primary">Generate</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Channel Comparison</h5>
+                                        <p class="card-text">Compare usage patterns between channels</p>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('generate_analysis', analysis_type='channel_comparison', session_id=session_id) }}" class="btn btn-primary">By Slug Line</a>
+                                            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <span class="visually-hidden">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="{{ url_for('generate_analysis', analysis_type='channel_comparison_by_id', session_id=session_id) }}">By Story ID</a></li>
+                                                <li><a class="dropdown-item" href="{{ url_for('generate_analysis', analysis_type='channel_comparison_by_master_slug', session_id=session_id) }}">By Master Slug</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Generate All</h5>
+                                        <p class="card-text">Generate all analyses and create PowerPoint</p>
+                                        <a href="{{ url_for('generate_all_analyses', session_id=session_id) }}" class="btn btn-success">Generate All</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">AI-Powered Insights</h5>
+                                        <p class="card-text">Generate AI analysis for a specific channel</p>
+                                        <div class="input-group mb-3">
+                                            <select class="form-select" id="aiChannelSelect">
+                                                <option selected>Select channel...</option>
+                                                {% for channel in stats.channels.split(', ') %}
+                                                    <option value="{{ channel }}">{{ channel }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button class="btn btn-primary" type="button" id="generateAiBtn">Generate</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Single-Slide PowerPoint (Channel-Specific)</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Generate a simple single-slide PowerPoint for a specific channel, similar to the sample slides:</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <select id="channelSelect" class="form-select mb-3">
+                                    <option value="" selected disabled>Select a channel</option>
+                                    {% for channel in stats.channels.split(', ') %}
+                                        <option value="{{ channel }}">{{ channel }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="clientFriendlyToggle">
+                                    <label class="form-check-label" for="clientFriendlyToggle">Client-Friendly Version</label>
+                                    <small class="form-text text-muted d-block">Focuses on positive trends and growth periods</small>
+                                </div>
+                                <button id="generateSingleSlide" class="btn btn-primary" disabled>Generate Single-Slide PowerPoint</button>
+                            </div>
+                        </div>
+                        <div id="downloadSingleSlide" style="display: none; margin-top: 15px;">
+                            <p>Your single-slide PowerPoint is ready:</p>
+                            <a id="downloadSingleSlideLink" href="#" class="btn btn-success">Download Single-Slide PowerPoint</a>
+                        </div>
+                        
+                        <!-- No additional links needed as the dropdown and generate button above handle this functionality -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                <div class="card-header">
+                    <h4>Full Report PowerPoint</h4>
+                </div>
+                    <div class="card-body">
+                        <p>After generating all analyses, you can download the PowerPoint presentation:</p>
+                        <a href="{{ url_for('download_report', session_id=session_id) }}" class="btn btn-primary">Download PowerPoint</a>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Upload New Data</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-content">
+                <img src="{{ url_for('static', filename='images/logos/tr_symbol_mark.png') }}" alt="Thomson Reuters Logo" class="tr-logo-footer">
+                <p>&copy; Reuters 2025 - RVN Client Analysis Tool</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Handle AI analysis generation
+        document.addEventListener('DOMContentLoaded', function() {
+            const aiChannelSelect = document.getElementById('aiChannelSelect');
+            const generateAiBtn = document.getElementById('generateAiBtn');
+            
+            // Handle generate AI button click
+            generateAiBtn.addEventListener('click', function() {
+                const selectedChannel = aiChannelSelect.value;
+                if (selectedChannel && selectedChannel !== 'Select channel...') {
+                    window.location.href = `/generate_ai_analysis/{{ session_id }}/${encodeURIComponent(selectedChannel)}`;
+                } else {
+                    alert('Please select a channel first');
+                }
+            });
+        });
+    
+        // Handle single-slide PowerPoint generation
+        document.addEventListener('DOMContentLoaded', function() {
+            const channelSelect = document.getElementById('channelSelect');
+            const generateButton = document.getElementById('generateSingleSlide');
+            const downloadDiv = document.getElementById('downloadSingleSlide');
+            const downloadLink = document.getElementById('downloadSingleSlideLink');
+            
+            // Enable/disable generate button based on channel selection
+            channelSelect.addEventListener('change', function() {
+                generateButton.disabled = !channelSelect.value;
+            });
+            
+            // Handle generate button click
+            generateButton.addEventListener('click', function() {
+                const selectedChannel = channelSelect.value;
+                if (!selectedChannel) return;
+                
+                // Get client-friendly toggle state
+                const clientFriendly = document.getElementById('clientFriendlyToggle').checked;
+                
+                // Show loading state
+                generateButton.disabled = true;
+                generateButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+                
+                // Call the generate endpoint with client-friendly parameter
+                fetch(`/generate_single_slide/{{ session_id }}/${encodeURIComponent(selectedChannel)}?client_friendly=${clientFriendly ? '1' : '0'}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(() => {
+                        // Update UI to show download button
+                        generateButton.innerHTML = 'Generate Single-Slide PowerPoint';
+                        generateButton.disabled = false;
+                        
+                        // Show download section
+                        // Get client-friendly toggle state
+                        const clientFriendly = document.getElementById('clientFriendlyToggle').checked;
+                        
+                        // Show download section
+                        downloadDiv.style.display = 'block';
+                        downloadLink.href = `/download_single_slide/{{ session_id }}/${encodeURIComponent(selectedChannel)}?client_friendly=${clientFriendly ? '1' : '0'}`;
+                        
+                        // Update download button text based on client-friendly toggle
+                        if (clientFriendly) {
+                            downloadLink.innerHTML = `Download ${selectedChannel} Client-Friendly PowerPoint`;
+                        } else {
+                            downloadLink.innerHTML = `Download ${selectedChannel} Single-Slide PowerPoint`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error generating single-slide PowerPoint:', error);
+                        generateButton.innerHTML = 'Generate Single-Slide PowerPoint';
+                        generateButton.disabled = false;
+                        alert('Error generating single-slide PowerPoint. Please try again.');
+                    });
+            });
+        });
+    </script>
+</body>
+</html>

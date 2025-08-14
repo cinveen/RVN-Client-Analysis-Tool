@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RVN Client Analysis - AI Insights</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tr_styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+        .ai-section {
+            margin-bottom: 2rem;
+            border-left: 4px solid #0c5460;
+            padding-left: 1rem;
+        }
+        .ai-section h4 {
+            color: #0c5460;
+            margin-bottom: 1rem;
+        }
+        .ai-loading {
+            text-align: center;
+            padding: 3rem 0;
+        }
+        .ai-loading .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        .ai-badge {
+            background-color: #17a2b8;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+        /* Markdown formatting styles */
+        .ai-list {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .ai-list li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+        .ai-heading {
+            color: #0c5460;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .ai-paragraph {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        /* Fix for nested lists */
+        .ai-list .ai-list {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        /* Improve formatting for strong and em tags */
+        strong {
+            font-weight: 600;
+        }
+        em {
+            font-style: italic;
+        }
+        .ai-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .ai-header h3 {
+            margin-bottom: 0;
+            margin-left: 0.5rem;
+        }
+        .ai-icon {
+            width: 32px;
+            height: 32px;
+        }
+        .ai-timestamp {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        .tab-content {
+            padding: 1.5rem;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 0.25rem 0.25rem;
+        }
+        .nav-tabs .nav-link {
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #fff;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
+        .recommendations {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 0.25rem;
+            margin-top: 1.5rem;
+        }
+        .recommendations h4 {
+            color: #0c5460;
+            margin-bottom: 1rem;
+        }
+        .recommendations ul {
+            padding-left: 1.5rem;
+        }
+        .recommendations li {
+            margin-bottom: 0.5rem;
+        }
+        .executive-summary {
+            background-color: #e9ecef;
+            padding: 1.5rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .executive-summary h4 {
+            color: #0c5460;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/logos/tr_pri_logo_rgb_color.png') }}" alt="Thomson Reuters Logo" class="tr-logo">
+            </div>
+            <h1>RVN Client Analysis Tool</h1>
+            <p class="lead">AI-Powered Insights</p>
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-warning">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="ai-header">
+                            <svg class="ai-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"></path>
+                                <path d="M12 16v-4"></path>
+                                <path d="M12 8h.01"></path>
+                            </svg>
+                            <h3>AI Analysis for {{ analysis.channel_name }}</h3>
+                        </div>
+                        <div class="ai-timestamp">Generated on {{ analysis.timestamp }}</div>
+                    </div>
+                    <div class="card-body">
+                        {% if loading %}
+                            <div class="ai-loading">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-3">Generating AI analysis... This may take a minute or two.</p>
+                            </div>
+                        {% else %}
+                            <div class="executive-summary">
+                                <h4>Executive Summary</h4>
+                                <p>{{ analysis.executive_summary|safe }}</p>
+                            </div>
+                            
+                            <ul class="nav nav-tabs" id="aiTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="audience-tab" data-bs-toggle="tab" data-bs-target="#audience" type="button" role="tab" aria-controls="audience" aria-selected="true">Insights by Audience</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="insight-tab" data-bs-toggle="tab" data-bs-target="#insight" type="button" role="tab" aria-controls="insight" aria-selected="false">Insights by Type</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="aiTabsContent">
+                                <div class="tab-pane fade show active" id="audience" role="tabpanel" aria-labelledby="audience-tab">
+                                    <div class="ai-section">
+                                        <h4>For Journalists and Producers</h4>
+                                        <div>{{ analysis.audience_insights.journalists_producers|safe }}</div>
+                                    </div>
+                                    <div class="ai-section">
+                                        <h4>For Output Editors</h4>
+                                        <div>{{ analysis.audience_insights.output_editors|safe }}</div>
+                                    </div>
+                                    <div class="ai-section">
+                                        <h4>For Marketing and Client-Facing Teams</h4>
+                                        <div>{{ analysis.audience_insights.marketing_teams|safe }}</div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="insight" role="tabpanel" aria-labelledby="insight-tab">
+                                    <div class="ai-section">
+                                        <h4>Content Strategy Insights</h4>
+                                        <div>{{ analysis.insight_types.content_strategy|safe }}</div>
+                                    </div>
+                                    <div class="ai-section">
+                                        <h4>Client Engagement Insights</h4>
+                                        <div>{{ analysis.insight_types.client_engagement|safe }}</div>
+                                    </div>
+                                    <div class="ai-section">
+                                        <h4>Market Positioning Insights</h4>
+                                        <div>{{ analysis.insight_types.market_positioning|safe }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="recommendations">
+                                <h4>Actionable Recommendations</h4>
+                                <div>
+                                    {% if analysis.recommendations and "**" not in analysis.recommendations %}
+                                        {{ analysis.recommendations|safe }}
+                                    {% else %}
+                                        <p>Please regenerate the analysis to view the recommendations. The AI model may have been truncated during the initial generation.</p>
+                                        <a href="{{ url_for('generate_ai_analysis', session_id=session_id, channel_name=analysis.channel_name, regenerate=1) }}" class="btn btn-primary">Regenerate Analysis</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Actions</h4>
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ url_for('analyze', session_id=session_id) }}" class="btn btn-primary">Back to Analysis Dashboard</a>
+                        {% if not loading %}
+                            <a href="{{ url_for('generate_ai_analysis', session_id=session_id, channel_name=analysis.channel_name, regenerate=1) }}" class="btn btn-secondary ms-2">Regenerate Analysis</a>
+                            <a href="{{ url_for('download_ai_analysis', session_id=session_id, channel_name=analysis.channel_name) }}" class="btn btn-success ms-2">Download Analysis (PDF)</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-content">
+                <img src="{{ url_for('static', filename='images/logos/tr_symbol_mark.png') }}" alt="Thomson Reuters Logo" class="tr-logo-footer">
+                <p>&copy; Reuters 2025 - RVN Client Analysis Tool</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% if loading %}
+    <script>
+        // Auto-refresh the page every 5 seconds to check if analysis is complete
+        setTimeout(function() {
+            window.location.reload();
+        }, 5000);
+    </script>
+    {% endif %}
+</body>
+</html>

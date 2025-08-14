@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RVN Client Analysis</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tr_styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/logos/tr_pri_logo_rgb_color.png') }}" alt="Thomson Reuters Logo" class="tr-logo">
+            </div>
+            <h1>RVN Client Analysis</h1>
+            <p class="lead">{{ analysis_title }}</p>
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-warning">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>{{ analysis_title }}</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="{{ url_for('static', filename=image_path) }}" class="analysis-image" alt="{{ analysis_title }}">
+                        
+                        {% if analysis_type == 'top_stories' %}
+                            <div class="mt-3 text-start">
+                                <h5>Understanding this Analysis</h5>
+                                <p>This chart shows the most frequently detected stories grouped by <strong>Story ID</strong>. Each Story ID is displayed with its most commonly used headline.</p>
+                                <p>Story IDs are unique identifiers for specific content pieces. This view shows which individual stories were most frequently detected, regardless of their slug line.</p>
+                                <div class="mt-3">
+                                    <a href="{{ url_for('generate_analysis', analysis_type='story_distribution', session_id=session_id) }}" class="btn btn-outline-primary">View Story Distribution</a>
+                                </div>
+                            </div>
+                        {% elif analysis_type == 'top_themes' %}
+                            <div class="mt-3 text-start">
+                                <h5>Understanding this Analysis</h5>
+                                <p>This chart shows the most frequently covered <strong>thematic areas</strong> based on master slugs.</p>
+                                <p>A master slug is the portion of the slug line before the forward slash (e.g., "NIGER-SECURITY/" from "NIGER-SECURITY/FRANCE"). This view groups all stories with the same master slug, showing which broader themes received the most coverage.</p>
+                            </div>
+                        {% elif analysis_type == 'story_distribution' %}
+                            <div class="mt-3 text-start">
+                                <h5>Understanding this Analysis</h5>
+                                <p>This pie chart shows the <strong>geographic distribution</strong> of Reuters video content used by the client.</p>
+                                <p>Countries are extracted from story slug lines and headlines. This view shows which countries or regions received the most coverage.</p>
+                                <div class="mt-3">
+                                    <a href="{{ url_for('generate_analysis', analysis_type='top_stories', session_id=session_id) }}" class="btn btn-outline-primary">Back to Top Stories</a>
+                                </div>
+                            </div>
+                        {% elif analysis_type == 'channel_comparison' or analysis_type == 'channel_comparison_by_id' or analysis_type == 'channel_comparison_by_master_slug' %}
+                            <div class="mt-3 text-start">
+                                <h5>Understanding this Analysis</h5>
+                                {% if analysis_type == 'channel_comparison' %}
+                                    <p>This chart shows how different channels use the <strong>top 5 stories</strong> based on their complete slug lines.</p>
+                                    <p>The full slug line includes both the thematic area and specific story details (e.g., "NIGER-SECURITY/FRANCE"). This view shows which specific stories were most frequently detected across different channels.</p>
+                                {% elif analysis_type == 'channel_comparison_by_id' %}
+                                    <p>This chart shows how different channels use the <strong>top 5 stories</strong> based on Story ID.</p>
+                                    <p>Story IDs are unique identifiers for specific content pieces. This view shows which individual stories were most frequently detected across different channels, regardless of their slug line.</p>
+                                {% elif analysis_type == 'channel_comparison_by_master_slug' %}
+                                    <p>This chart shows how different channels use the <strong>top 5 thematic areas</strong> based on master slugs.</p>
+                                    <p>A master slug is the portion of the slug line before the forward slash (e.g., "NIGER-SECURITY/" from "NIGER-SECURITY/FRANCE"). This view groups all stories with the same master slug, showing which broader themes were most frequently detected across different channels.</p>
+                                {% endif %}
+                                <div class="mt-3">
+                                    <p><strong>View by:</strong></p>
+                                    <div class="btn-group" role="group" aria-label="Channel comparison view options">
+                                        <a href="{{ url_for('generate_analysis', analysis_type='channel_comparison', session_id=session_id) }}" class="btn btn-outline-primary {% if analysis_type == 'channel_comparison' %}active{% endif %}">Slug Line</a>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='channel_comparison_by_id', session_id=session_id) }}" class="btn btn-outline-primary {% if analysis_type == 'channel_comparison_by_id' %}active{% endif %}">Story ID</a>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='channel_comparison_by_master_slug', session_id=session_id) }}" class="btn btn-outline-primary {% if analysis_type == 'channel_comparison_by_master_slug' %}active{% endif %}">Master Slug</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Actions</h4>
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ url_for('analyze', session_id=session_id) }}" class="btn btn-primary">Back to Analysis Dashboard</a>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Upload New Data</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-content">
+                <img src="{{ url_for('static', filename='images/logos/tr_symbol_mark.png') }}" alt="Thomson Reuters Logo" class="tr-logo-footer">
+                <p>&copy; Reuters 2025 - RVN Client Analysis Tool</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
