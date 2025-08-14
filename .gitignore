@@ -35,8 +35,10 @@ env/
 # Project specific
 uploads/
 static/reports/
+static/images/*/
 output/
 site/
+Sample_Data/*.xlsx
 
 # Temporary files
 *.tmp

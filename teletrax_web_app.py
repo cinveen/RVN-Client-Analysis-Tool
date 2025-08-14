@@ -1159,6 +1159,72 @@ def generate_ai_analysis(session_id, channel_name):
             # Apply the master slug extraction to the channel data
             channel_df['Master Slug'] = channel_df['Slug line'].apply(extract_master_slug)
             
+            # Get the top themes
+            top_themes = channel_df['Master Slug'].value_counts().head(10).to_dict()
+            
+            # Get detection patterns
+            hourly_counts = channel_df['Detection Hour'].value_counts().sort_index()
+            peak_hours = hourly_counts.nlargest(3).index.tolist()
+            
+            weekday_counts = channel_df['Detection Weekday'].value_counts()
+            peak_days = weekday_counts.nlargest(3).index.tolist()
+            
+            detection_patterns = {
+                'peak_hours': ', '.join([f"{hour}:00" for hour in peak_hours]),
+                'peak_days': ', '.join(peak_days)
+            }
+            
+            # Get country distribution
+            from teletrax_analysis import extract_countries_from_text
+            
+            content_countries = []
+            
+            # Process each story in the data
+            for _, row in channel_df.iterrows():
+                # Extract countries from slug line (handle NaN values)
+                slug_countries = extract_countries_from_text(row['Slug line']) if pd.notna(row['Slug line']) else []
+                
+                # Extract countries from headline (handle NaN values)
+                headline_countries = extract_countries_from_text(row['Headline']) if pd.notna(row['Headline']) else []
+                
+                # Combine countries from both sources
+                story_countries = list(set(slug_countries + headline_countries))
+                
+                # If no countries found, try using the topic as a potential country
+                if not story_countries and 'Topic' in row and pd.notna(row['Topic']):
+                    topic_countries = extract_countries_from_text(row['Topic'])
+                    if topic_countries:
+                        story_countries = topic_countries
+                
+                # Add to the overall list
+                content_countries.extend(story_countries)
+            
+            # Count occurrences of each country
+            if content_countries:
+                country_counts = pd.Series(content_countries).value_counts()
+                
+                # If there are too many countries, group smaller ones as "Rest of the world"
+                if len(country_counts) > 8:
+                    top_countries = country_counts.head(7)
+                    rest_of_world = pd.Series({'Rest of the world': country_counts[7:].sum()})
+                    country_counts = pd.concat([top_countries, rest_of_world])
+                
+                # Calculate percentages
+                country_percentages = (country_counts / country_counts.sum() * 100).round(0).astype(int)
+                country_distribution = country_percentages.to_dict()
+            else:
+                # If no countries found, create a default "Unknown" category
+                country_distribution = {'Unknown': 100}
+            
+            # Prepare the data for the LiteLLM API
+            teletrax_data = {
+                'stats': stats,
+                'top_stories': top_stories,
+                'top_themes': top_themes,
+                'detection_patterns': detection_patterns,
+                'country_distribution': country_distribution
+            }
+            
             # Also normalize the original slug lines to replace ADVISORY with LIVE:
             # This ensures consistency in the data sent to the AI model
             def normalize_slug_line(slug_line):
@@ -1192,6 +1258,48 @@ def generate_ai_analysis(session_id, channel_name):
                 'peak_hours': ', '.join([f"{hour}:00" for hour in peak_hours]),
                 'peak_days': ', '.join(peak_days)
             }
+            
+            # Get country distribution
+            from teletrax_analysis import extract_countries_from_text
+            
+            content_countries = []
+            
+            # Process each story in the data
+            for _, row in channel_df.iterrows():
+                # Extract countries from slug line (handle NaN values)
+                slug_countries = extract_countries_from_text(row['Slug line']) if pd.notna(row['Slug line']) else []
+                
+                # Extract countries from headline (handle NaN values)
+                headline_countries = extract_countries_from_text(row['Headline']) if pd.notna(row['Headline']) else []
+                
+                # Combine countries from both sources
+                story_countries = list(set(slug_countries + headline_countries))
+                
+                # If no countries found, try using the topic as a potential country
+                if not story_countries and 'Topic' in row and pd.notna(row['Topic']):
+                    topic_countries = extract_countries_from_text(row['Topic'])
+                    if topic_countries:
+                        story_countries = topic_countries
+                
+                # Add to the overall list
+                content_countries.extend(story_countries)
+            
+            # Count occurrences of each country
+            if content_countries:
+                country_counts = pd.Series(content_countries).value_counts()
+                
+                # If there are too many countries, group smaller ones as "Rest of the world"
+                if len(country_counts) > 8:
+                    top_countries = country_counts.head(7)
+                    rest_of_world = pd.Series({'Rest of the world': country_counts[7:].sum()})
+                    country_counts = pd.concat([top_countries, rest_of_world])
+                
+                # Calculate percentages
+                country_percentages = (country_counts / country_counts.sum() * 100).round(0).astype(int)
+                country_distribution = country_percentages.to_dict()
+            else:
+                # If no countries found, create a default "Unknown" category
+                country_distribution = {'Unknown': 100}
             
             # Get country distribution
             from teletrax_analysis import extract_countries_from_text
