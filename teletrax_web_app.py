@@ -24,7 +24,9 @@ from teletrax_analysis import (
     analyze_top_stories,
     analyze_detection_patterns,
     analyze_detection_lengths,
-    timedelta_to_seconds
+    timedelta_to_seconds,
+    TR_ORANGE,
+    TR_DARK_SKY
 )
 
 def convert_markdown_to_html(text):
@@ -444,6 +446,110 @@ def generate_analysis(analysis_type, session_id):
                                session_id=session_id, 
                                analysis_type='top_themes',
                                image='top_themes.png'))
+                               
+    elif analysis_type == 'top_live_broadcasts':
+        # Filter for live broadcasts (stories with "ADVISORY" prefix)
+        live_broadcasts = df[df['Slug line'].str.startswith('ADVISORY ', na=False)]
+        
+        if len(live_broadcasts) == 0:
+            # If no live broadcasts found, create a message image
+            plt.figure(figsize=(10, 6))
+            plt.text(0.5, 0.5, 'No live broadcasts (ADVISORY content) found in the dataset', 
+                    ha='center', va='center', fontsize=16)
+            plt.axis('off')
+            plt.savefig(os.path.join(output_dir, 'no_live_broadcasts.png'), dpi=300)
+            plt.close()
+            
+            return redirect(url_for('view_analysis', 
+                                   session_id=session_id, 
+                                   analysis_type=analysis_type,
+                                   image='no_live_broadcasts.png'))
+        
+        # Get top live broadcasts
+        top_live_broadcasts = live_broadcasts['Slug line'].value_counts().head(15)
+        
+        # Clean the labels to replace "ADVISORY " with "LIVE: "
+        clean_labels = [f"LIVE: {label[9:]}" for label in top_live_broadcasts.index]
+        
+        plt.figure(figsize=(12, 8))
+        bars = plt.barh(clean_labels[::-1], top_live_broadcasts.values[::-1], color=TR_ORANGE)
+        plt.title('Top 15 Most Detected Live Broadcasts', fontsize=16)
+        plt.xlabel('Number of Detections', fontsize=12)
+        plt.ylabel('Live Broadcast', fontsize=12)
+        plt.grid(True, alpha=0.3, axis='x')
+        
+        # Add count labels
+        for bar in bars:
+            width = bar.get_width()
+            plt.text(width + 5, bar.get_y() + bar.get_height()/2, 
+                    f'{width:,.0f}', ha='left', va='center', fontsize=10)
+        
+        # Add explanatory note
+        plt.figtext(0.5, 0.01, 
+                   "Note: 'ADVISORY' in Reuters video content indicates a live broadcast. These are displayed with the 'LIVE:' prefix for clarity.", 
+                   ha='center', fontsize=10, style='italic')
+        
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_dir, 'top_live_broadcasts.png'), dpi=300)
+        plt.close()
+        
+        # Create a pie chart showing the proportion of live broadcasts vs. regular content
+        total_stories = len(df)
+        live_count = len(live_broadcasts)
+        regular_count = total_stories - live_count
+        
+        live_percentage = (live_count / total_stories) * 100
+        regular_percentage = (regular_count / total_stories) * 100
+        
+        plt.figure(figsize=(10, 8))
+        plt.pie([live_count, regular_count], 
+                labels=[f"Live Broadcasts\n{live_percentage:.1f}%", f"Regular Content\n{regular_percentage:.1f}%"], 
+                autopct='%1.1f%%', 
+                startangle=90, 
+                colors=[TR_ORANGE, TR_DARK_SKY],
+                wedgeprops={'edgecolor': 'white'})
+        plt.title("Proportion of Live Broadcasts vs. Regular Content", fontsize=16)
+        plt.axis('equal')
+        
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_dir, 'live_broadcast_proportion.png'), dpi=300)
+        plt.close()
+        
+        # Create a time series of live broadcasts
+        live_broadcasts['Detection Date'] = live_broadcasts['UTC detection start'].dt.date
+        daily_live_counts = live_broadcasts.groupby('Detection Date').size()
+        
+        # Resample to fill in missing dates with zeros
+        date_range = pd.date_range(start=daily_live_counts.index.min(), end=daily_live_counts.index.max())
+        daily_live_counts = daily_live_counts.reindex(date_range, fill_value=0)
+        
+        # Calculate 30-day moving average
+        moving_avg = daily_live_counts.rolling(window=30).mean()
+        
+        plt.figure(figsize=(15, 7))
+        plt.plot(daily_live_counts.index, daily_live_counts.values, color=TR_DARK_SKY, alpha=0.5, label='Daily Live Broadcasts')
+        plt.plot(moving_avg.index, moving_avg.values, color=TR_ORANGE, linewidth=2, label='30-Day Moving Average')
+        plt.title('Live Broadcasts Over Time', fontsize=16)
+        plt.xlabel('Date', fontsize=12)
+        plt.ylabel('Number of Live Broadcast Detections', fontsize=12)
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        
+        # Format x-axis
+        import matplotlib.dates as mdates
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+        plt.gca().xaxis.set_major_locator(mdates.YearLocator())
+        plt.xticks(rotation=45)
+        
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_dir, 'live_broadcasts_time_series.png'), dpi=300)
+        plt.close()
+        
+        # Return the main visualization first
+        return redirect(url_for('view_analysis', 
+                               session_id=session_id, 
+                               analysis_type=analysis_type,
+                               image='top_live_broadcasts.png'))
     
     elif analysis_type == 'detection_patterns':
         # Hour of day analysis
@@ -742,6 +848,7 @@ def view_analysis(session_id, analysis_type, image):
         'time_series': 'Time Series Analysis',
         'top_stories': 'Top Stories Analysis',
         'top_themes': 'Top Themes Analysis',
+        'top_live_broadcasts': 'Top Live Broadcasts Analysis',
         'detection_patterns': 'Detection Patterns Analysis',
         'detection_lengths': 'Detection Lengths Analysis',
         'channel_comparison': 'Channel Comparison Analysis (by Slug Line)',
