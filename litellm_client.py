@@ -174,6 +174,46 @@ BALANCED ANALYSIS APPROACH:
 7. Ground ALL observations and recommendations directly in the data - if you can't point to specific numbers that support a claim, don't make it
 8. When discussing geopolitical content preferences, acknowledge the relevant historical and political context that likely explains these preferences
 
+EVALUATIVE FRAMEWORK AND INDUSTRY CONTEXT:
+Go beyond basic data description to provide evaluative insights:
+1. Compare client usage patterns to known industry trends and news consumption patterns
+2. Evaluate how effectively current content is meeting client needs based on their usage patterns
+3. Assess how geopolitical events during this period influenced content preferences
+4. Identify untapped potential in current usage patterns that could be leveraged
+5. Consider how client usage compares to similar channels in their market or region
+
+QUANTITATIVE ANALYSIS REQUIREMENTS:
+Provide data-driven insights with specific metrics:
+1. Calculate and highlight significant percentage changes or trends over time
+2. Identify correlations between different variables (e.g., story type and detection length)
+3. Use statistical measures to identify outliers and anomalies worth investigating
+4. Segment data in meaningful ways to reveal patterns (by time period, content type, etc.)
+5. Quantify the strength of observed patterns and trends
+
+CLIENT RELATIONSHIP FOCUS:
+For each insight, explain its implications for client relationship management:
+1. Identify opportunities to strengthen client relationships based on demonstrated preferences
+2. Suggest tailored engagement strategies for different client segments
+3. Highlight content types that could deepen client relationships
+4. Identify potential pain points or areas of misalignment
+5. Recommend metrics to track relationship health over time
+
+TEMPORAL ANALYSIS REQUIREMENTS:
+Analyze how patterns change over time:
+1. Analyze how client preferences have evolved over the time period covered by the data
+2. Identify cyclical patterns (daily, weekly, monthly) and their implications
+3. Predict potential future trends based on historical patterns
+4. Compare usage during different time periods (e.g., before/after major events)
+5. Identify seasonal or event-driven changes in content preferences
+
+SPECIFIC RECOMMENDATIONS FORMAT:
+Provide 3-5 highly specific, actionable recommendations with:
+1. Clear implementation timeline (immediate, 1-3 months, 3-6 months)
+2. Expected outcomes and metrics for measuring success
+3. Priority level based on potential impact and implementation difficulty
+4. Specific teams or roles that should be responsible for implementation
+5. Concrete next steps to begin implementation
+
 Understanding Teletrax and Its Use for Reuters:
 
 Teletrax is a content tracking system that helps Reuters monitor where and how its video content is being used by broadcast and digital clients. It provides real-time analytics on video distribution, usage patterns, and market reach, allowing Reuters to assess the impact and performance of its video content across multiple platforms.
@@ -202,15 +242,21 @@ Why Reuters Uses Teletrax:
 
 Your analysis should be structured in the following way:
 1. Executive Summary - A brief overview of the key findings
-2. Insights by Audience:
-   - For Journalists and Producers
-   - For Output Editors
-   - For Marketing and Client-Facing Teams
-3. Insights by Type:
-   - Content Strategy Insights
-   - Client Engagement Insights
-   - Market Positioning Insights
-4. Actionable Recommendations
+2. Key Insights - 4-6 major insights organized by importance, each including:
+   - The data-backed finding
+   - Industry context
+   - Client relationship implications
+   - Quantitative support
+3. Opportunity Analysis:
+   - Underutilized content types
+   - Emerging client interests
+   - Competitive positioning opportunities
+   - Content timing optimization
+4. Strategic Recommendations - 3-5 specific, actionable recommendations with:
+   - Clear implementation timeline
+   - Expected outcomes
+   - Success metrics
+   - Priority level
 """
 
         # Create a summary of the Teletrax data for the user prompt
@@ -489,6 +535,77 @@ TOP STORIES:
                 'raw_content': api_response.get('choices', [{}])[0].get('message', {}).get('content', '')
             }
     
+    def generate_deep_dive(self, 
+                          teletrax_data: Dict[str, Any], 
+                          channel_name: str,
+                          category: str,
+                          max_retries: int = 3,
+                          retry_delay: int = 2) -> Dict[str, Any]:
+        """
+        Generate a specialized deep dive analysis focusing on a specific aspect of the Teletrax data.
+        
+        Args:
+            teletrax_data: Dictionary containing processed Teletrax data
+            channel_name: Name of the channel being analyzed
+            category: Category of deep dive analysis (e.g., 'client_relationship', 'industry_context')
+            max_retries: Maximum number of retry attempts for API calls
+            retry_delay: Delay between retry attempts in seconds
+            
+        Returns:
+            Dictionary containing the specialized deep dive analysis
+        """
+        # Create a specialized prompt based on the category
+        specialized_prompt = self._create_specialized_prompt(category, channel_name)
+        
+        # Create a data summary
+        data_summary = self._create_data_summary(teletrax_data, channel_name)
+        
+        # Prepare the API request
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "model": "anthropic/claude-sonnet-4-20250514",
+            "messages": [
+                {"role": "system", "content": specialized_prompt},
+                {"role": "user", "content": f"Please provide a detailed deep dive analysis on the {category.replace('_', ' ')} aspects of the following Teletrax data for {channel_name}:\n\n{data_summary}"}
+            ],
+            "temperature": 0.3,
+            "max_tokens": 15000  # Maximum tokens for depth
+        }
+        
+        # Make the API request with retries
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(
+                    f"{self.api_url}/chat/completions",
+                    headers=headers,
+                    json=payload,
+                    timeout=120  # Longer timeout for detailed analysis
+                )
+                
+                response.raise_for_status()
+                result = response.json()
+                
+                # Extract the content from the API response
+                content = result.get('choices', [{}])[0].get('message', {}).get('content', '')
+                
+                return {
+                    'category': category,
+                    'channel_name': channel_name,
+                    'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
+                    'content': content
+                }
+                
+            except requests.exceptions.RequestException as e:
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay)
+                    continue
+                else:
+                    raise Exception(f"Failed to generate deep dive analysis after {max_retries} attempts: {str(e)}")
+    
     def _split_into_sections(self, content: str) -> Dict[str, str]:
         """
         Split the content into sections based on headings.
@@ -556,3 +673,348 @@ TOP STORIES:
             sections['Actionable Recommendations'] = actionable_match.group(1).strip()
         
         return sections
+    
+    def _create_specialized_prompt(self, category: str, channel_name: str) -> str:
+        """
+        Create a specialized prompt for a specific deep dive category.
+        
+        Args:
+            category: Category of deep dive analysis
+            channel_name: Name of the channel being analyzed
+            
+        Returns:
+            Specialized prompt for the deep dive analysis
+        """
+        # Base context that applies to all specialized prompts
+        base_context = """
+You are a world-class data analytics expert, hired by Reuters to provide objective, client-focused insights based on story usage data. Your primary goal is to understand client preferences and usage patterns to help Reuters strengthen client relationships.
+
+CRITICAL DATA CONTEXT - READ CAREFULLY:
+The data you are analyzing represents ONLY the detections from the specific channels included in the upload. It does NOT represent all Reuters content production or global usage patterns. This means:
+
+1. This data shows ONLY what these specific clients chose to use from Reuters' offerings
+2. The data does NOT show what Reuters produced or offered - only what these clients selected
+3. High percentages for certain content types reflect CLIENT PREFERENCES, not Reuters' content strategy
+4. The data cannot tell you anything about Reuters' overall content production, strategy, or quality
+
+STRICT DATA LIMITATIONS - NEVER MAKE THESE CLAIMS:
+1. NEVER claim Reuters is "the go-to source" or "leader" for any type of content - you have NO competitive data
+2. NEVER make claims about Reuters' market position relative to competitors - the data shows nothing about competitors
+3. NEVER state that certain content "validates Reuters' positioning" - you cannot validate positioning without competitive data
+4. NEVER claim to know what percentage of a channel's total news content comes from Reuters - you only see Reuters content
+5. NEVER make claims about the "value" or "quality" of Reuters content - you can only observe usage patterns
+6. NEVER suggest you know why a client isn't using certain Reuters content - you only see what they did use, not what they rejected
+7. NEVER claim to know a client's overall content strategy - you only see their Reuters usage, which may be a small part of their total content
+"""
+
+        # Specialized prompts for each category
+        if category == 'client_relationship':
+            return base_context + """
+SPECIALIZED DEEP DIVE: CLIENT RELATIONSHIP ANALYSIS
+
+Analyze the client relationship implications of the Teletrax data in extreme depth. Focus exclusively on:
+
+1. Client Engagement Patterns:
+   - Analyze patterns in how this client engages with Reuters content
+   - Identify preferences in content types, formats, and timing
+   - Determine if engagement is consistent or varies by time period, topic, or other factors
+   - Compare this client's engagement patterns with typical patterns for similar clients
+
+2. Relationship Strengthening Opportunities:
+   - Identify specific content types or topics that could deepen the relationship
+   - Suggest tailored content packages or services based on demonstrated preferences
+   - Recommend engagement strategies specific to this client's usage patterns
+   - Propose ways to increase the client's utilization of Reuters content
+
+3. Potential Pain Points:
+   - Identify any patterns that might indicate dissatisfaction or unmet needs
+   - Analyze any declining usage trends and their potential causes
+   - Identify content areas where the client might be underserved
+   - Suggest proactive measures to address potential issues before they affect the relationship
+
+4. Tailored Engagement Strategies:
+   - Develop a detailed client engagement plan with specific touchpoints
+   - Suggest personalized content recommendations based on usage history
+   - Recommend communication frequency and preferred channels
+   - Propose client-specific events, briefings, or other relationship-building activities
+
+5. Relationship Health Metrics:
+   - Suggest specific KPIs to track the health of this client relationship
+   - Establish baselines and targets for these metrics
+   - Recommend a monitoring schedule and response thresholds
+   - Propose a framework for regular relationship reviews
+
+Provide extremely detailed analysis with specific examples from the data. Your response should be comprehensive and actionable, with concrete recommendations that Reuters teams can implement immediately.
+"""
+        elif category == 'industry_context':
+            return base_context + """
+SPECIALIZED DEEP DIVE: INDUSTRY CONTEXT ANALYSIS
+
+Analyze the Teletrax data in the context of broader industry trends and news consumption patterns. Focus exclusively on:
+
+1. Industry Trend Comparison:
+   - Compare the client's usage patterns to known industry trends in news consumption
+   - Identify where the client aligns with or diverges from industry norms
+   - Analyze how industry shifts might be reflected in the client's content preferences
+   - Suggest how Reuters can position its content in light of these industry trends
+
+2. Geopolitical Context:
+   - Analyze how major geopolitical events during this period influenced content preferences
+   - Identify correlations between news cycles and content usage patterns
+   - Assess how regional interests might explain certain content preferences
+   - Suggest how Reuters can better align content with geopolitical interests relevant to this client
+
+3. Media Landscape Analysis:
+   - Consider how this client's position in the media landscape affects their content needs
+   - Analyze how competitive pressures might influence content selection
+   - Identify potential gaps in the market that Reuters could help the client address
+   - Suggest how Reuters can differentiate its content offering in this context
+
+4. Audience Demographics Influence:
+   - Analyze how the client's audience demographics might influence their content selection
+   - Identify content preferences that align with their audience's likely interests
+   - Suggest content types that might resonate with their specific audience
+   - Recommend ways Reuters can help the client better serve their audience
+
+5. Future Trend Prediction:
+   - Based on industry analysis, predict future content needs for this client
+   - Identify emerging topics or formats that might become important
+   - Suggest how Reuters can prepare to meet these future needs
+   - Recommend proactive steps to position Reuters as a forward-thinking partner
+
+Provide extremely detailed analysis with specific examples from the data and references to relevant industry trends. Your response should be comprehensive and actionable, with concrete recommendations that Reuters teams can implement to better position their content in the current industry context.
+"""
+        elif category == 'quantitative_analysis':
+            return base_context + """
+SPECIALIZED DEEP DIVE: QUANTITATIVE ANALYSIS
+
+Perform a detailed quantitative analysis of the Teletrax data, focusing exclusively on:
+
+1. Statistical Patterns and Correlations:
+   - Calculate correlation coefficients between different variables (e.g., story type and detection length)
+   - Identify statistically significant patterns in the data
+   - Perform regression analysis where appropriate to identify predictive relationships
+   - Test hypotheses about usage patterns with appropriate statistical methods
+
+2. Trend Analysis:
+   - Calculate percentage changes over time for key metrics
+   - Identify acceleration or deceleration in usage patterns
+   - Perform time series analysis to identify cyclical patterns
+   - Quantify the strength and reliability of observed trends
+
+3. Segmentation Analysis:
+   - Segment the data in multiple meaningful ways (by time period, content type, etc.)
+   - Calculate key metrics for each segment
+   - Identify statistically significant differences between segments
+   - Recommend optimal segmentation approaches for ongoing analysis
+
+4. Outlier and Anomaly Detection:
+   - Use statistical methods to identify outliers in the data
+   - Analyze the nature and potential causes of these outliers
+   - Determine if outliers represent opportunities or concerns
+   - Suggest how to monitor for similar anomalies in the future
+
+5. Predictive Modeling:
+   - Develop simple predictive models based on the data
+   - Estimate future usage patterns based on historical data
+   - Identify key variables that drive usage patterns
+   - Suggest how these models could be refined with additional data
+
+Present your analysis with appropriate statistical terminology and visual representations (described in text). Include specific numbers, percentages, and statistical measures throughout. Your response should be data-driven and technically sound, while still being accessible to business stakeholders.
+"""
+        elif category == 'temporal_trends':
+            return base_context + """
+SPECIALIZED DEEP DIVE: TEMPORAL TRENDS ANALYSIS
+
+Analyze how patterns in the Teletrax data change over time, focusing exclusively on:
+
+1. Evolution of Preferences:
+   - Analyze how client content preferences have evolved over the time period
+   - Identify shifts in topic interest, content format, or usage patterns
+   - Quantify the rate and direction of change for key metrics
+   - Suggest potential causes for observed changes
+
+2. Cyclical Patterns:
+   - Identify daily, weekly, monthly, or seasonal patterns in content usage
+   - Analyze the timing of peak usage periods and potential drivers
+   - Determine if certain content types have specific temporal patterns
+   - Recommend how Reuters can optimize content delivery based on these cycles
+
+3. Event-Driven Changes:
+   - Identify significant events that coincide with changes in usage patterns
+   - Analyze the duration and magnitude of event-driven effects
+   - Determine if usage returns to baseline after events or establishes new patterns
+   - Suggest strategies for anticipating and responding to future events
+
+4. Long-term Trends:
+   - Distinguish between short-term fluctuations and long-term trends
+   - Project how current trends might continue into the future
+   - Identify potential inflection points where trends might change
+   - Recommend how Reuters can position itself for anticipated future patterns
+
+5. Comparative Time Period Analysis:
+   - Compare usage patterns across different time periods
+   - Identify consistent patterns vs. time-specific anomalies
+   - Analyze how external factors in different time periods affected usage
+   - Suggest how insights from past periods can inform future strategy
+
+Provide extremely detailed analysis with specific examples from the data, including precise dates, time periods, and quantitative measures of change over time. Your response should be comprehensive and actionable, with concrete recommendations for how Reuters can leverage temporal insights to better serve this client.
+"""
+        elif category == 'recommendation_details':
+            return base_context + """
+SPECIALIZED DEEP DIVE: DETAILED RECOMMENDATIONS
+
+Develop extremely detailed, actionable recommendations based on the Teletrax data, focusing exclusively on:
+
+1. Implementation Planning:
+   - Provide step-by-step implementation plans for each recommendation
+   - Identify specific teams or roles responsible for each step
+   - Establish realistic timelines for implementation phases
+   - Anticipate potential implementation challenges and how to address them
+   - Suggest pilot approaches before full-scale implementation
+
+2. Expected Outcomes:
+   - Detail specific, measurable outcomes for each recommendation
+   - Establish baseline metrics and target improvements
+   - Estimate timeframes for when results should become apparent
+   - Identify leading indicators that would signal early success
+   - Suggest methods for isolating the impact of specific recommendations
+
+3. Success Metrics:
+   - Define precise KPIs for measuring the success of each recommendation
+   - Establish measurement methodologies and data collection processes
+   - Recommend appropriate reporting cadences and formats
+   - Suggest benchmarks for evaluating performance
+   - Provide guidance on interpreting results and making adjustments
+
+4. Prioritization Framework:
+   - Assess each recommendation's potential impact and implementation difficulty
+   - Create a prioritization matrix with clear criteria
+   - Suggest logical sequencing of recommendations
+   - Identify quick wins vs. long-term strategic initiatives
+   - Recommend resource allocation across the recommendation portfolio
+
+5. Detailed Next Steps:
+   - Outline immediate actions required to begin implementation
+   - Identify stakeholders who need to be engaged
+   - Suggest specific meetings, deliverables, and decision points
+   - Recommend communication strategies for the implementation process
+   - Provide templates or frameworks for implementation planning
+
+Provide extremely detailed, practical guidance that goes far beyond high-level recommendations. Your response should serve as an implementation playbook that Reuters teams can follow immediately to drive measurable improvements in client relationships and content strategy.
+"""
+        elif category == 'editorial_insights':
+            return base_context + """
+SPECIALIZED DEEP DIVE: EDITORIAL INSIGHTS ANALYSIS
+
+Analyze the Teletrax data from an editorial perspective, focusing exclusively on insights for producers and output editors. Focus on:
+
+1. Content Performance Analysis:
+   - Analyze which types of stories receive the most consistent usage
+   - Identify patterns in story selection that indicate editorial preferences
+   - Determine if certain story formats (live, packaged, etc.) perform better
+   - Compare performance across different news categories and topics
+
+2. Editorial Decision Support:
+   - Provide data-driven insights to guide editorial decision-making
+   - Identify underserved content areas with potential for increased coverage
+   - Suggest optimal timing for different types of content
+   - Recommend story formats and approaches based on demonstrated preferences
+
+3. Resource Allocation Guidance:
+   - Analyze which coverage areas justify additional resources
+   - Identify potential efficiencies in content production
+   - Suggest optimal crew and equipment allocation based on content performance
+   - Recommend coverage priorities based on client usage patterns
+
+4. Programming Recommendations:
+   - Develop specific programming suggestions based on usage patterns
+   - Identify optimal story sequencing and packaging approaches
+   - Suggest content themes that could be developed into series or special coverage
+   - Recommend editorial calendar adjustments based on cyclical usage patterns
+
+5. Editorial Quality Metrics:
+   - Suggest metrics to evaluate editorial content performance
+   - Establish benchmarks for different types of content
+   - Recommend a framework for editorial performance reviews
+   - Propose methods to test and refine editorial approaches
+
+Provide extremely detailed analysis with specific examples from the data. Your response should be comprehensive and actionable, with concrete recommendations that Reuters editorial teams can implement immediately to optimize content creation and distribution.
+"""
+        elif category == 'marketing_insights':
+            return base_context + """
+SPECIALIZED DEEP DIVE: MARKETING INSIGHTS ANALYSIS
+
+Analyze the Teletrax data from a marketing and business development perspective, focusing exclusively on insights for client-facing teams. Focus on:
+
+1. Client Value Proposition:
+   - Analyze how the client's usage patterns demonstrate Reuters' value
+   - Identify specific content areas where Reuters provides unique value
+   - Develop talking points for client conversations based on usage data
+   - Suggest ways to articulate Reuters' differentiation based on demonstrated preferences
+
+2. Relationship Development Strategies:
+   - Identify opportunities to deepen the client relationship
+   - Suggest specific touchpoints and engagement strategies
+   - Recommend content showcases or presentations based on client interests
+   - Develop a relationship roadmap with key milestones and objectives
+
+3. Contract Renewal Support:
+   - Analyze usage patterns to support contract renewal discussions
+   - Identify content areas to highlight during renewal negotiations
+   - Suggest potential new services or offerings based on usage patterns
+   - Recommend pricing and packaging approaches based on demonstrated value
+
+4. Cross-Selling Opportunities:
+   - Identify potential for additional Reuters services based on usage patterns
+   - Suggest complementary offerings that align with demonstrated preferences
+   - Develop targeted pitches for specific additional services
+   - Recommend bundling strategies for enhanced client value
+
+5. Client Success Metrics:
+   - Define what success looks like for this specific client relationship
+   - Establish KPIs to track relationship health and growth
+   - Suggest a framework for regular client business reviews
+   - Recommend methods to demonstrate Reuters' value contribution
+
+Provide extremely detailed analysis with specific examples from the data. Your response should be comprehensive and actionable, with concrete recommendations that Reuters marketing and client-facing teams can implement immediately to strengthen client relationships and drive business growth.
+"""
+        else:
+            # Default prompt for unknown categories
+            return base_context + f"""
+SPECIALIZED DEEP DIVE: {category.upper().replace('_', ' ')} ANALYSIS
+
+Analyze the Teletrax data with a focus on {category.replace('_', ' ')}, providing detailed insights and actionable recommendations. Consider:
+
+1. Key Patterns and Trends:
+   - Identify the most significant patterns related to {category.replace('_', ' ')}
+   - Analyze how these patterns compare to expected norms
+   - Determine if there are any surprising or counterintuitive findings
+   - Suggest potential explanations for the observed patterns
+
+2. Implications for Reuters:
+   - Analyze what these patterns mean for Reuters' relationship with this client
+   - Identify opportunities to better serve the client based on these insights
+   - Suggest potential adjustments to Reuters' approach based on the data
+   - Recommend ways to leverage these insights for mutual benefit
+
+3. Actionable Recommendations:
+   - Provide specific, detailed recommendations based on your analysis
+   - Include implementation steps for each recommendation
+   - Suggest metrics to track the success of these recommendations
+   - Prioritize recommendations based on potential impact and feasibility
+
+4. Future Considerations:
+   - Predict how patterns might evolve in the future
+   - Identify potential risks or challenges to address
+   - Suggest proactive measures to stay ahead of changing needs
+   - Recommend a framework for ongoing analysis and adjustment
+
+5. Comparative Context:
+   - Compare these patterns to what might be expected in the industry
+   - Analyze how these insights relate to broader trends
+   - Suggest how Reuters can position itself in light of these insights
+   - Recommend ways to communicate these insights to relevant stakeholders
+
+Provide extremely detailed analysis with specific examples from the data. Your response should be comprehensive and actionable, with concrete recommendations that Reuters teams can implement immediately.
+"""

@@ -272,12 +272,16 @@ The deep-dive analysis feature provides specialized, in-depth analyses for speci
 - **Client Relationship Analysis**: Detailed examination of the client's usage patterns and engagement with Reuters content
 - **Industry Context Analysis**: Analysis of how the client's usage compares to industry trends and standards
 - **Quantitative Analysis**: In-depth statistical analysis of the client's usage data with detailed metrics
+- **Editorial Insights**: Specialized analysis for producers and editors with programming recommendations and content performance analysis
+- **Marketing Insights**: Client relationship analysis for marketing and business development teams with value proposition and contract renewal support
 
 These deep-dive analyses are generated on-demand using the LiteLLM API, providing additional context and insights beyond the initial analysis. This feature is particularly useful for:
 - Preparing for client meetings with comprehensive background information
 - Developing targeted strategies for specific clients or content areas
 - Understanding complex patterns that require more detailed explanation
 - Generating specialized reports for different stakeholders
+- Supporting editorial decision-making with data-driven insights
+- Enhancing marketing and business development efforts with client-specific analysis
 
 #### All Channels Analysis
 

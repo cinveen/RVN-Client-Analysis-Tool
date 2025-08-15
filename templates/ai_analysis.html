@@ -228,6 +228,28 @@
                                         Generate Analysis
                                     </button>
                                 </div>
+                                
+                                <div class="deep-dive-button">
+                                    <h5>Editorial Insights</h5>
+                                    <p>Specialized analysis for producers and editors with programming recommendations</p>
+                                    <button class="btn btn-primary deep-dive-btn" 
+                                            data-category="editorial_insights" 
+                                            data-session="{{ session_id }}" 
+                                            data-channel="{{ analysis.channel_name }}">
+                                        Generate Analysis
+                                    </button>
+                                </div>
+                                
+                                <div class="deep-dive-button">
+                                    <h5>Marketing Insights</h5>
+                                    <p>Client relationship analysis for marketing and business development teams</p>
+                                    <button class="btn btn-primary deep-dive-btn" 
+                                            data-category="marketing_insights" 
+                                            data-session="{{ session_id }}" 
+                                            data-channel="{{ analysis.channel_name }}">
+                                        Generate Analysis
+                                    </button>
+                                </div>
                             </div>
                             
                             <!-- Deep Dive Content Containers -->
@@ -263,6 +285,34 @@
                                 <div class="deep-dive-header">
                                     <h4>Quantitative Analysis</h4>
                                     <button type="button" class="btn-close" aria-label="Close" onclick="hideDeepDive('quantitative_analysis')"></button>
+                                </div>
+                                <div class="loading-spinner text-center my-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Generating detailed analysis...</p>
+                                </div>
+                                <div class="deep-dive-results mt-4"></div>
+                            </div>
+                            
+                            <div class="deep-dive-content" id="deep-dive-editorial_insights" style="display: none;">
+                                <div class="deep-dive-header">
+                                    <h4>Editorial Insights</h4>
+                                    <button type="button" class="btn-close" aria-label="Close" onclick="hideDeepDive('editorial_insights')"></button>
+                                </div>
+                                <div class="loading-spinner text-center my-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Generating detailed analysis...</p>
+                                </div>
+                                <div class="deep-dive-results mt-4"></div>
+                            </div>
+                            
+                            <div class="deep-dive-content" id="deep-dive-marketing_insights" style="display: none;">
+                                <div class="deep-dive-header">
+                                    <h4>Marketing Insights</h4>
+                                    <button type="button" class="btn-close" aria-label="Close" onclick="hideDeepDive('marketing_insights')"></button>
                                 </div>
                                 <div class="loading-spinner text-center my-4">
                                     <div class="spinner-border text-primary" role="status">

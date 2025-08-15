@@ -21,23 +21,22 @@ This document provides a chronological list of recent updates, enhancements, and
 - **Impact**: Users can now more easily access specialized analyses without navigating through tabs
 - **User Experience**: Provides a more intuitive, focused experience with clear options for in-depth analysis
 
-#### AI Analysis Deep-Dive Feature
+#### AI Analysis Deep-Dive Feature Enhancement
 
-- **New Feature**: Added "Learn More" buttons to the AI analysis page for on-demand deep-dive analyses
-- **Enhancement**: Users can now request specialized deep-dive analyses for specific aspects of the data
+- **Enhancement**: Expanded the deep-dive analysis feature with two new specialized categories
 - **Technical Details**:
-  - Added "Learn More" buttons to each section of the AI analysis page
-  - Implemented AJAX requests to generate deep-dive analyses on demand
-  - Created a new `/deep_dive/<category>/<session_id>/<channel_name>` endpoint in `teletrax_web_app.py`
-  - Enhanced the LiteLLM client to support specialized deep-dive prompts
-- **Deep-Dive Categories**:
+  - Redesigned the deep-dive button layout for better organization of the expanded options
+  - Added two new specialized prompts to the LiteLLM client
+  - Updated the AI analysis template to include containers for the new deep-dive categories
+- **New Deep-Dive Categories**:
+  - Editorial Insights: Specialized analysis for producers and editors with programming recommendations and content performance analysis
+  - Marketing Insights: Client relationship analysis for marketing and business development teams with value proposition and contract renewal support
+- **Existing Deep-Dive Categories**:
   - Client Relationship Analysis: Detailed examination of client usage patterns and engagement
   - Industry Context Analysis: Analysis of how client usage compares to industry trends
   - Quantitative Analysis: In-depth statistical analysis of usage data
-  - Temporal Trends Analysis: Detailed examination of usage changes over time
-  - Recommendation Details: Expanded recommendations with implementation strategies
-- **Impact**: Users can now access more detailed, specialized analyses without regenerating the entire analysis
-- **User Experience**: Provides a more interactive, exploratory experience with the AI analysis feature
+- **Impact**: Users can now access role-specific analyses tailored to editorial and marketing teams
+- **User Experience**: Provides more targeted insights for different stakeholders within the organization
 
 #### Raw Data Analysis Enhancement
 
