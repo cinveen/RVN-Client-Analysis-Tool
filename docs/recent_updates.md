@@ -6,6 +6,24 @@ This document provides a chronological list of recent updates, enhancements, and
 
 ### August 15, 2025
 
+#### AI Analysis Deep-Dive Feature
+
+- **New Feature**: Added "Learn More" buttons to the AI analysis page for on-demand deep-dive analyses
+- **Enhancement**: Users can now request specialized deep-dive analyses for specific aspects of the data
+- **Technical Details**:
+  - Added "Learn More" buttons to each section of the AI analysis page
+  - Implemented AJAX requests to generate deep-dive analyses on demand
+  - Created a new `/deep_dive/<category>/<session_id>/<channel_name>` endpoint in `teletrax_web_app.py`
+  - Enhanced the LiteLLM client to support specialized deep-dive prompts
+- **Deep-Dive Categories**:
+  - Client Relationship Analysis: Detailed examination of client usage patterns and engagement
+  - Industry Context Analysis: Analysis of how client usage compares to industry trends
+  - Quantitative Analysis: In-depth statistical analysis of usage data
+  - Temporal Trends Analysis: Detailed examination of usage changes over time
+  - Recommendation Details: Expanded recommendations with implementation strategies
+- **Impact**: Users can now access more detailed, specialized analyses without regenerating the entire analysis
+- **User Experience**: Provides a more interactive, exploratory experience with the AI analysis feature
+
 #### Raw Data Analysis Enhancement
 
 - **Enhancement**: Enhanced the AI analysis to process and analyze the complete raw data, not just pre-processed summaries

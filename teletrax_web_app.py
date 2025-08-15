@@ -1522,6 +1522,243 @@ def view_ai_analysis(session_id, channel_name):
                           analysis=analysis,
                           loading=False)
 
+@app.route('/deep_dive/<category>/<session_id>/<channel_name>')
+def generate_deep_dive(category, session_id, channel_name):
+    """Generate a specialized deep dive analysis for a specific aspect of the data
+    
+    This function uses the LiteLLM API to generate a specialized deep dive analysis
+    focusing on a specific aspect of the Teletrax data for a channel. It processes
+    the data, sends it to the LiteLLM API with a specialized prompt, and returns
+    the results as JSON for AJAX requests.
+    
+    Args:
+        category (str): Category of deep dive analysis (e.g., 'client_relationship')
+        session_id (str): Unique session ID for the current analysis
+        channel_name (str): Name of the channel being analyzed
+        
+    Returns:
+        JSON response with the specialized deep dive analysis
+    """
+    # Check if session exists
+    session_dir = os.path.join(app.config['UPLOAD_FOLDER'], session_id)
+    if not os.path.exists(session_dir):
+        return json.dumps({'error': 'Session not found'}), 404
+    
+    # Load processed data
+    processed_file = os.path.join(session_dir, 'processed_data.pkl')
+    if not os.path.exists(processed_file):
+        return json.dumps({'error': 'Processed data not found'}), 404
+    
+    # Check if deep dive analysis already exists
+    deep_dive_file = os.path.join(session_dir, f'deep_dive_{category}_{channel_name}.json')
+    if os.path.exists(deep_dive_file):
+        # Load the existing analysis
+        with open(deep_dive_file, 'r') as f:
+            deep_dive = json.load(f)
+        
+        # Convert markdown to HTML
+        deep_dive['content'] = convert_markdown_to_html(deep_dive['content'])
+        
+        return json.dumps({'content': deep_dive['content']})
+    
+    try:
+        # Load the data
+        df = pd.read_pickle(processed_file)
+        
+        # Handle "All Channels" option or filter for a specific channel
+        if channel_name == "All Channels":
+            channel_df = df  # Use all data
+            display_name = "All Channels"
+        else:
+            # Filter data for the specific channel
+            channel_df = df[df['Channel: Name'] == channel_name]
+            display_name = channel_name
+        
+        if len(channel_df) == 0:
+            return json.dumps({'error': f"No data found for channel {channel_name}"}), 404
+        
+        # Get basic stats for the channel
+        stats = {
+            'total_records': len(channel_df),
+            'date_range': f"{channel_df['UTC detection start'].min().date()} to {channel_df['UTC detection start'].max().date()}",
+            'markets': ', '.join(channel_df['Market: Name'].unique()),
+            'unique_stories': channel_df['Slug line'].nunique(),
+            'unique_story_ids': channel_df['Story ID'].nunique()
+        }
+        
+        # Get top stories for the channel
+        top_stories = channel_df['Slug line'].value_counts().head(10).to_dict()
+        
+        # Extract top themes (master slugs)
+        def extract_master_slug(slug_line):
+            if pd.isna(slug_line):
+                return "Unknown"
+            
+            # Replace "ADVISORY " prefix with "LIVE: " if present
+            if isinstance(slug_line, str) and slug_line.startswith("ADVISORY "):
+                slug_line = "LIVE: " + slug_line[9:].strip()
+            
+            # Find the position of the first forward slash
+            slash_pos = slug_line.find('/')
+            
+            # If a slash is found, extract everything before it and add the slash
+            if slash_pos != -1:
+                return slug_line[:slash_pos+1]  # Include the slash
+            else:
+                # If no slash is found, return the entire slug line
+                return slug_line
+        
+        # Apply the master slug extraction to the channel data
+        channel_df['Master Slug'] = channel_df['Slug line'].apply(extract_master_slug)
+        
+        # Get the top themes
+        top_themes = channel_df['Master Slug'].value_counts().head(10).to_dict()
+        
+        # Get detection patterns
+        hourly_counts = channel_df['Detection Hour'].value_counts().sort_index()
+        peak_hours = hourly_counts.nlargest(3).index.tolist()
+        
+        weekday_counts = channel_df['Detection Weekday'].value_counts()
+        peak_days = weekday_counts.nlargest(3).index.tolist()
+        
+        detection_patterns = {
+            'peak_hours': ', '.join([f"{hour}:00" for hour in peak_hours]),
+            'peak_days': ', '.join(peak_days)
+        }
+        
+        # Get country distribution
+        from teletrax_analysis import extract_countries_from_text
+        
+        content_countries = []
+        
+        # Process each story in the data
+        for _, row in channel_df.iterrows():
+            # Extract countries from slug line (handle NaN values)
+            slug_countries = extract_countries_from_text(row['Slug line']) if pd.notna(row['Slug line']) else []
+            
+            # Extract countries from headline (handle NaN values)
+            headline_countries = extract_countries_from_text(row['Headline']) if pd.notna(row['Headline']) else []
+            
+            # Combine countries from both sources
+            story_countries = list(set(slug_countries + headline_countries))
+            
+            # If no countries found, try using the topic as a potential country
+            if not story_countries and 'Topic' in row and pd.notna(row['Topic']):
+                topic_countries = extract_countries_from_text(row['Topic'])
+                if topic_countries:
+                    story_countries = topic_countries
+            
+            # Add to the overall list
+            content_countries.extend(story_countries)
+        
+        # Count occurrences of each country
+        if content_countries:
+            country_counts = pd.Series(content_countries).value_counts()
+            
+            # If there are too many countries, group smaller ones as "Rest of the world"
+            if len(country_counts) > 8:
+                top_countries = country_counts.head(7)
+                rest_of_world = pd.Series({'Rest of the world': country_counts[7:].sum()})
+                country_counts = pd.concat([top_countries, rest_of_world])
+            
+            # Calculate percentages
+            country_percentages = (country_counts / country_counts.sum() * 100).round(0).astype(int)
+            country_distribution = country_percentages.to_dict()
+        else:
+            # If no countries found, create a default "Unknown" category
+            country_distribution = {'Unknown': 100}
+        
+        # Prepare the data for the LiteLLM API
+        # Include both the raw data and the processed summaries
+        
+        # First, convert the DataFrame to a dictionary of records
+        # This will be a list of dictionaries, where each dictionary represents a row
+        # We'll limit to a maximum of 1000 records to avoid token limits
+        max_records = 1000
+        if len(channel_df) > max_records:
+            # Sample the data if it's too large
+            raw_data_sample = channel_df.sample(max_records, random_state=42).to_dict('records')
+            print(f"Sampling {max_records} records from {len(channel_df)} total records")
+        else:
+            raw_data_sample = channel_df.to_dict('records')
+        
+        # Clean up the raw data to make it more manageable
+        # Remove any columns that aren't needed for analysis
+        columns_to_keep = [
+            'Channel: Name', 'Market: Name', 'UTC detection start', 
+            'Local detection start', 'Story ID', 'Slug line', 
+            'Headline', 'Detection Length (seconds)', 'Topic', 'Subtopic',
+            'Detection Year', 'Detection Month', 'Detection Day', 
+            'Detection Hour', 'Detection Weekday'
+        ]
+        
+        # Filter the raw data to only include the columns we need
+        cleaned_raw_data = []
+        for record in raw_data_sample:
+            cleaned_record = {}
+            for col in columns_to_keep:
+                if col in record:
+                    # Convert datetime objects to strings
+                    if isinstance(record[col], pd.Timestamp):
+                        cleaned_record[col] = record[col].isoformat()
+                    else:
+                        cleaned_record[col] = record[col]
+            cleaned_raw_data.append(cleaned_record)
+        
+        # Create the teletrax_data dictionary with both raw and processed data
+        teletrax_data = {
+            'raw_data': cleaned_raw_data,  # Include the raw data
+            'stats': stats,
+            'top_stories': top_stories,
+            'top_themes': top_themes,
+            'detection_patterns': detection_patterns,
+            'country_distribution': country_distribution
+        }
+        
+        # For "All Channels" analysis, add channel comparison data
+        if channel_name == "All Channels":
+            # Get channel counts
+            channel_counts = df['Channel: Name'].value_counts().to_dict()
+            
+            # Get channel-specific story preferences
+            channel_story_preferences = {}
+            for ch in df['Channel: Name'].unique():
+                ch_df = df[df['Channel: Name'] == ch]
+                ch_top_stories = ch_df['Slug line'].value_counts().head(5).to_dict()
+                channel_story_preferences[ch] = ch_top_stories
+            
+            # Add channel comparison data to teletrax_data
+            teletrax_data['channel_comparison'] = {
+                'channel_counts': channel_counts,
+                'channel_story_preferences': channel_story_preferences
+            }
+        
+        # Initialize the LiteLLM client
+        # Use the API key from environment variable
+        api_key = os.environ.get('LITELLM_API_KEY')
+        api_url = os.environ.get('LITELLM_API_URL', 'https://litellm.int.thomsonreuters.com')
+        
+        if not api_key:
+            return json.dumps({'error': "LITELLM_API_KEY environment variable is not set"}), 500
+        
+        litellm_client = LiteLLMClient(api_key=api_key, api_url=api_url)
+        
+        # Generate the specialized deep dive analysis
+        deep_dive = litellm_client.generate_deep_dive(teletrax_data, display_name, category)
+        
+        # Save the analysis to a file
+        with open(deep_dive_file, 'w') as f:
+            json.dump(deep_dive, f, indent=2)
+        
+        # Convert markdown to HTML
+        deep_dive['content'] = convert_markdown_to_html(deep_dive['content'])
+        
+        return json.dumps({'content': deep_dive['content']})
+        
+    except Exception as e:
+        print(f"Error generating deep dive analysis: {str(e)}")
+        return json.dumps({'error': str(e)}), 500
+
 @app.route('/download_ai_analysis/<session_id>/<channel_name>')
 def download_ai_analysis(session_id, channel_name):
     """Download the AI-powered analysis as a PDF

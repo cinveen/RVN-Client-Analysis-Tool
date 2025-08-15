@@ -255,7 +255,23 @@ In the web interface:
 3. Select a channel from the dropdown (or choose "All Channels" for a holistic analysis) and click "Generate"
 4. The system will process the data and generate the AI analysis
 5. View the analysis organized by audience and insight type
-6. Download the analysis as a PDF if needed
+6. Use the "Learn More" buttons to generate detailed deep-dive analyses on specific topics
+7. Download the analysis as a PDF if needed
+
+#### Deep-Dive Analysis
+
+The "Learn More" feature provides on-demand, specialized deep-dive analyses for specific aspects of the data:
+- **Client Relationship Analysis**: Detailed examination of the client's usage patterns and engagement with Reuters content
+- **Industry Context Analysis**: Analysis of how the client's usage compares to industry trends and standards
+- **Quantitative Analysis**: In-depth statistical analysis of the client's usage data
+- **Temporal Trends Analysis**: Detailed examination of how the client's usage has changed over time
+- **Recommendation Details**: Expanded recommendations with implementation strategies and expected outcomes
+
+These deep-dive analyses are generated on-demand using the LiteLLM API, providing additional context and insights beyond the initial analysis. This feature is particularly useful for:
+- Preparing for client meetings with comprehensive background information
+- Developing targeted strategies for specific clients or content areas
+- Understanding complex patterns that require more detailed explanation
+- Generating specialized reports for different stakeholders
 
 #### All Channels Analysis
 
