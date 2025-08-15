@@ -1344,7 +1344,45 @@ def generate_ai_analysis(session_id, channel_name):
                 country_distribution = {'Unknown': 100}
             
             # Prepare the data for the LiteLLM API
+            # Include both the raw data and the processed summaries
+            
+            # First, convert the DataFrame to a dictionary of records
+            # This will be a list of dictionaries, where each dictionary represents a row
+            # We'll limit to a maximum of 1000 records to avoid token limits
+            max_records = 1000
+            if len(channel_df) > max_records:
+                # Sample the data if it's too large
+                raw_data_sample = channel_df.sample(max_records, random_state=42).to_dict('records')
+                print(f"Sampling {max_records} records from {len(channel_df)} total records")
+            else:
+                raw_data_sample = channel_df.to_dict('records')
+            
+            # Clean up the raw data to make it more manageable
+            # Remove any columns that aren't needed for analysis
+            columns_to_keep = [
+                'Channel: Name', 'Market: Name', 'UTC detection start', 
+                'Local detection start', 'Story ID', 'Slug line', 
+                'Headline', 'Detection Length (seconds)', 'Topic', 'Subtopic',
+                'Detection Year', 'Detection Month', 'Detection Day', 
+                'Detection Hour', 'Detection Weekday'
+            ]
+            
+            # Filter the raw data to only include the columns we need
+            cleaned_raw_data = []
+            for record in raw_data_sample:
+                cleaned_record = {}
+                for col in columns_to_keep:
+                    if col in record:
+                        # Convert datetime objects to strings
+                        if isinstance(record[col], pd.Timestamp):
+                            cleaned_record[col] = record[col].isoformat()
+                        else:
+                            cleaned_record[col] = record[col]
+                cleaned_raw_data.append(cleaned_record)
+            
+            # Create the teletrax_data dictionary with both raw and processed data
             teletrax_data = {
+                'raw_data': cleaned_raw_data,  # Include the raw data
                 'stats': stats,
                 'top_stories': top_stories,
                 'top_themes': top_themes,

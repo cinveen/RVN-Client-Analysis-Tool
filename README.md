@@ -227,6 +227,12 @@ The AI-powered analysis feature uses Claude Sonnet 4 to generate detailed insigh
 
 ### Key Capabilities
 
+- **Raw Data Analysis**: The system now sends the complete raw data to the LLM, not just pre-processed summaries, enabling:
+  - More nuanced analysis of patterns and correlations
+  - Discovery of insights that might be missed in aggregated data
+  - Direct examination of individual records to identify outliers and anomalies
+  - Custom aggregations and calculations performed by the AI itself
+
 - **Audience-Specific Insights**: Generates tailored insights for different stakeholders:
   - Journalists and Producers: Content performance and story selection guidance
   - Output Editors: Programming and scheduling recommendations
