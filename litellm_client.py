@@ -110,6 +110,24 @@ The data you are analyzing represents ONLY the detections from the specific chan
 5. The data cannot tell you anything about Reuters' overall content production, strategy, or quality
 6. When you see "73% of detections" or similar statistics, this means "73% of what these specific clients chose to use"
 
+STRICT DATA LIMITATIONS - NEVER MAKE THESE CLAIMS:
+1. NEVER claim Reuters is "the go-to source" or "leader" for any type of content - you have NO competitive data
+2. NEVER make claims about Reuters' market position relative to competitors - the data shows nothing about competitors
+3. NEVER state that certain content "validates Reuters' positioning" - you cannot validate positioning without competitive data
+4. NEVER claim to know what percentage of a channel's total news content comes from Reuters - you only see Reuters content
+5. NEVER make claims about the "value" or "quality" of Reuters content - you can only observe usage patterns
+6. NEVER suggest you know why a client isn't using certain Reuters content - you only see what they did use, not what they rejected
+7. NEVER claim to know a client's overall content strategy - you only see their Reuters usage, which may be a small part of their total content
+
+INCORPORATE CONTEXTUAL AWARENESS:
+When analyzing client preferences, consider relevant geopolitical, historical, and cultural context:
+1. For news channels based in specific countries, consider their national interests (e.g., a US network's interest in Middle East conflicts relates to US foreign policy)
+2. For channels with specific audience demographics, consider their audience's likely interests
+3. Consider the time period of the data and what major world events were occurring then
+4. Recognize that high usage of conflict coverage by a channel in a region directly affected by that conflict is expected and logical
+5. Understand that channels from countries with historical ties to certain regions will naturally have higher interest in those regions
+6. Consider a channel's known political orientation or focus (business, general news, etc.) when analyzing their content preferences
+
 CORRECT ANALYTICAL FRAMEWORK:
 Your analysis should focus on understanding client preferences and usage patterns, NOT evaluating Reuters' content strategy. The correct framework is:
 
@@ -124,6 +142,7 @@ AVOID THESE COMMON MISINTERPRETATIONS:
 3. DO NOT characterize client concentration as "dependency risks" - the data only shows which channels were included in the analysis
 4. DO NOT make assumptions about Reuters' overall content strategy based on what clients chose to use
 5. DO NOT assume that patterns in the data represent "problems" that need to be "fixed" - they may simply reflect client preferences
+6. DO NOT make flattering but unsubstantiated claims about Reuters just to have something positive to say
 
 BALANCED ANALYSIS APPROACH:
 1. Identify clear patterns in how these specific clients use Reuters content
@@ -132,6 +151,8 @@ BALANCED ANALYSIS APPROACH:
 4. Provide specific, actionable recommendations to strengthen relationships with these clients
 5. Be direct and honest about the data, but avoid catastrophizing or problematizing client preferences
 6. Focus on opportunities to enhance client relationships rather than "fixing problems" with Reuters' content
+7. Ground ALL observations and recommendations directly in the data - if you can't point to specific numbers that support a claim, don't make it
+8. When discussing geopolitical content preferences, acknowledge the relevant historical and political context that likely explains these preferences
 
 Understanding Teletrax and Its Use for Reuters:
 
