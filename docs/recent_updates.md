@@ -6,6 +6,18 @@ This document provides a chronological list of recent updates, enhancements, and
 
 ### August 15, 2025
 
+#### AI Analysis Framework Shift
+
+- **Enhancement**: Fundamentally shifted the AI analysis framework to focus on client usage patterns rather than Reuters content strategy
+- **Bug Fix**: Fixed an issue where the AI was incorrectly problematizing client preferences as "strategic risks" or "content waste"
+- **Technical Details**:
+  - Completely restructured the system prompt in `litellm_client.py` to emphasize client-focused insights
+  - Added a "CORRECT ANALYTICAL FRAMEWORK" section that explicitly guides the AI to analyze client preferences, not evaluate Reuters' content strategy
+  - Added an "AVOID THESE COMMON MISINTERPRETATIONS" section to prevent the AI from framing client preferences as problems
+  - Updated the "BALANCED ANALYSIS APPROACH" to focus on opportunities to enhance client relationships rather than "fixing problems" with Reuters' content
+- **Impact**: AI-generated insights now correctly focus on understanding client preferences and usage patterns to strengthen relationships
+- **User Experience**: Eliminates misleading statements like "your content strategy is dangerously narrow" or "89% of your stories are essentially invisible" when these simply reflect client preferences
+
 #### AI Analysis Data Context Clarification
 
 - **Enhancement**: Updated the system prompt in the LiteLLM client to clarify the data context for AI analysis
@@ -290,10 +302,3 @@ The following features are currently in development and planned for future relea
 
 - **Interactive Dashboard**: Real-time interactive dashboard for exploring Teletrax data
 - **API Integration**: Direct API integration with Teletrax for automated data retrieval
-- **Custom Analysis Builder**: User interface for creating custom analysis configurations
-- **Scheduled Reports**: Automated generation and distribution of periodic reports
-- **Multi-Dataset Comparison**: Tools for comparing multiple datasets side by side
-
-## Feedback and Feature Requests
-
-We welcome feedback and feature requests from users. Please contact the RVN Client Analysis Tool team to share your suggestions or report any issues.
