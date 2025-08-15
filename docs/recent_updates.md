@@ -6,6 +6,17 @@ This document provides a chronological list of recent updates, enhancements, and
 
 ### August 15, 2025
 
+#### AI Analysis Data Context Clarification
+
+- **Enhancement**: Updated the system prompt in the LiteLLM client to clarify the data context for AI analysis
+- **Bug Fix**: Fixed an issue where the AI was incorrectly interpreting the data as representing all Reuters content production rather than just the specific channels in the dataset
+- **Technical Details**:
+  - Added a "CRITICAL DATA CONTEXT" section to the system prompt in `litellm_client.py`
+  - Explicitly instructed the AI that the data represents only detections from the specific channels included in the upload
+  - Clarified that percentages and statistics are relative only to the channels in the dataset, not global Reuters performance
+- **Impact**: AI-generated insights now correctly interpret the scope of the data, avoiding misleading conclusions about Reuters' overall content strategy
+- **User Experience**: Eliminates confusing statements like "Your newsroom is producing 12,781 unique stories" or "CNN International represents 73% of all detections" when these statistics only apply to the specific channels in the dataset
+
 #### Enhanced AI Analysis Balance
 
 - **Enhancement**: Updated the system prompt in the LiteLLM client to provide more balanced and critical AI analysis
