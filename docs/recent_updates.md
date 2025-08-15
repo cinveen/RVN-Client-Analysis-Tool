@@ -6,6 +6,29 @@ This document provides a chronological list of recent updates, enhancements, and
 
 ### August 15, 2025
 
+#### AI Analysis Hallucination Prevention Enhancement
+
+- **Enhancement**: Strengthened the AI analysis system to prevent hallucinations and fabricated statistics
+- **Bug Fix**: Fixed an issue where the AI was occasionally generating made-up statistics about industry trends
+- **Technical Details**:
+  - Added a "STRICT PROHIBITION ON FABRICATING STATISTICS" section to the system prompt
+  - Explicitly instructed the AI to never invent or fabricate statistics about industry trends
+  - Added clear guidelines on when the AI can provide contextual information (e.g., connecting spikes in coverage to known world events)
+  - Enhanced all specialized deep-dive prompts with additional safeguards against fabricating statistics
+- **Impact**: AI-generated insights are now more reliable and factually grounded
+- **User Experience**: Eliminates misleading statements like "40% growth in live streaming news consumption" when such statistics have no factual basis
+
+#### ADVISORY Terminology Consistency Enhancement
+
+- **Enhancement**: Improved consistency in handling "ADVISORY" terminology throughout the application
+- **Bug Fix**: Fixed inconsistencies in how "ADVISORY" content was labeled in different parts of the analysis
+- **Technical Details**:
+  - Added more prominent instructions in the system prompt about "ADVISORY" always indicating LIVE broadcasts
+  - Enhanced the terminology section to explicitly require consistent use of "LIVE broadcast" or "LIVE content" terminology
+  - Added reminders about this terminology in all specialized deep-dive prompts
+- **Impact**: AI-generated insights now consistently treat "ADVISORY" content as LIVE broadcasts across all sections
+- **User Experience**: Eliminates confusion from inconsistent terminology between different parts of the analysis
+
 #### AI Analysis Interface Redesign
 
 - **UI Enhancement**: Completely redesigned the AI analysis interface for a more focused, user-friendly experience

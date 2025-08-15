@@ -130,6 +130,13 @@ The data you are analyzing represents ONLY the detections from the specific chan
 5. The data cannot tell you anything about Reuters' overall content production, strategy, or quality
 6. When you see "73% of detections" or similar statistics, this means "73% of what these specific clients chose to use"
 
+IMPORTANT TERMINOLOGY - ADVISORY = LIVE BROADCAST:
+When you see "ADVISORY" at the beginning of a slug line or headline, this ALWAYS indicates a LIVE broadcast. It is NOT a content category or type. In the data processing, "ADVISORY" is replaced with "LIVE:" for clarity. For example, "ADVISORY USA-ELECTION/" and "LIVE: USA-ELECTION/" refer to the same content - a live broadcast of election coverage. 
+- ALWAYS treat "ADVISORY" content as LIVE broadcasts in your analysis
+- NEVER refer to "Advisory Production" or "Advisory Content" as a separate category
+- ALWAYS use "LIVE broadcast" or "LIVE content" when referring to this type of content
+- Be consistent in this terminology throughout all sections of your analysis
+
 STRICT DATA LIMITATIONS - NEVER MAKE THESE CLAIMS:
 1. NEVER claim Reuters is "the go-to source" or "leader" for any type of content - you have NO competitive data
 2. NEVER make claims about Reuters' market position relative to competitors - the data shows nothing about competitors
@@ -138,6 +145,15 @@ STRICT DATA LIMITATIONS - NEVER MAKE THESE CLAIMS:
 5. NEVER make claims about the "value" or "quality" of Reuters content - you can only observe usage patterns
 6. NEVER suggest you know why a client isn't using certain Reuters content - you only see what they did use, not what they rejected
 7. NEVER claim to know a client's overall content strategy - you only see their Reuters usage, which may be a small part of their total content
+
+STRICT PROHIBITION ON FABRICATING STATISTICS:
+1. NEVER invent or fabricate statistics about industry trends (e.g., "40% growth in live streaming news consumption")
+2. NEVER make up percentages, growth rates, or numerical claims without factual basis
+3. NEVER create fictional industry benchmarks or comparative metrics
+4. If referring to industry trends or external context, ONLY mention well-established facts
+5. You MAY provide historical context for patterns in the data (e.g., connecting spikes in Israel-Palestine coverage to the October 7, 2023 Hamas attacks)
+6. You MAY use your knowledge of major world events to explain patterns in the data
+7. When in doubt about a specific statistic or trend, DO NOT include it in your analysis
 
 INCORPORATE CONTEXTUAL AWARENESS:
 When analyzing client preferences, consider relevant geopolitical, historical, and cultural context:
@@ -231,7 +247,7 @@ How Teletrax Works:
    • Provides insights into client engagement, content performance, and potential underutilization.
 
 Important Reuters Content Terminology:
-• "ADVISORY" prefix: When you see "ADVISORY" at the beginning of a slug line or headline, this indicates a LIVE broadcast. It is NOT a content category or type. In the data processing, "ADVISORY" is replaced with "LIVE:" for clarity. For example, "ADVISORY USA-ELECTION/" and "LIVE: USA-ELECTION/" refer to the same content - a live broadcast of election coverage. Do not treat "ADVISORY" content as a separate category in your analysis or recommendations.
+• "ADVISORY" prefix: When you see "ADVISORY" at the beginning of a slug line or headline, this indicates a LIVE broadcast. It is NOT a content category or type. In the data processing, "ADVISORY" is replaced with "LIVE:" for clarity. For example, "ADVISORY USA-ELECTION/" and "LIVE: USA-ELECTION/" refer to the same content - a live broadcast of election coverage. ALWAYS treat "ADVISORY" content as LIVE broadcasts in your analysis and recommendations. NEVER refer to "Advisory Production" or "Advisory Content" as a separate category - always use "LIVE broadcast" or "LIVE content" terminology.
 
 Why Reuters Uses Teletrax:
 • Client Engagement: Understand how broadcast and digital partners are using Reuters content.
@@ -757,32 +773,38 @@ Analyze the Teletrax data in the context of broader industry trends and news con
    - Identify where the client aligns with or diverges from industry norms
    - Analyze how industry shifts might be reflected in the client's content preferences
    - Suggest how Reuters can position its content in light of these industry trends
+   - NEVER fabricate statistics about industry trends (e.g., "40% growth in streaming")
+   - Only reference well-established industry facts and trends
 
 2. Geopolitical Context:
    - Analyze how major geopolitical events during this period influenced content preferences
    - Identify correlations between news cycles and content usage patterns
    - Assess how regional interests might explain certain content preferences
    - Suggest how Reuters can better align content with geopolitical interests relevant to this client
+   - Use your knowledge of major world events to explain patterns in the data
 
 3. Media Landscape Analysis:
    - Consider how this client's position in the media landscape affects their content needs
    - Analyze how competitive pressures might influence content selection
    - Identify potential gaps in the market that Reuters could help the client address
    - Suggest how Reuters can differentiate its content offering in this context
+   - Avoid making up statistics about market share or competitive positioning
 
 4. Audience Demographics Influence:
    - Analyze how the client's audience demographics might influence their content selection
    - Identify content preferences that align with their audience's likely interests
    - Suggest content types that might resonate with their specific audience
    - Recommend ways Reuters can help the client better serve their audience
+   - Base demographic insights on established facts, not fabricated statistics
 
 5. Future Trend Prediction:
    - Based on industry analysis, predict future content needs for this client
    - Identify emerging topics or formats that might become important
    - Suggest how Reuters can prepare to meet these future needs
    - Recommend proactive steps to position Reuters as a forward-thinking partner
+   - Avoid making specific numerical predictions about future growth rates
 
-Provide extremely detailed analysis with specific examples from the data and references to relevant industry trends. Your response should be comprehensive and actionable, with concrete recommendations that Reuters teams can implement to better position their content in the current industry context.
+Provide extremely detailed analysis with specific examples from the data and references to relevant industry trends. Your response should be comprehensive and actionable, with concrete recommendations that Reuters teams can implement to better position their content in the current industry context. Remember that "ADVISORY" content always refers to LIVE broadcasts - use this terminology consistently.
 """
         elif category == 'quantitative_analysis':
             return base_context + """
