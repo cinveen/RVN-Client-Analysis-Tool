@@ -254,18 +254,24 @@ In the web interface:
 2. Find the "AI-Powered Insights" card
 3. Select a channel from the dropdown (or choose "All Channels" for a holistic analysis) and click "Generate"
 4. The system will process the data and generate the AI analysis
-5. View the analysis organized by audience and insight type
-6. Use the "Learn More" buttons to generate detailed deep-dive analyses on specific topics
+5. View the Executive Summary for a high-level overview
+6. Select one of the three deep-dive analysis options to generate specialized insights
 7. Download the analysis as a PDF if needed
+
+#### Redesigned Interface
+
+The AI analysis interface has been redesigned for a more focused, user-friendly experience:
+- **Executive Summary**: Loads immediately when the analysis is generated
+- **Deep-Dive Analysis Options**: Three prominent buttons for specialized analyses
+- **On-Demand Generation**: Each deep-dive analysis is generated only when requested
+- **Focused Content**: Each analysis type focuses on a specific aspect of the data
 
 #### Deep-Dive Analysis
 
-The "Learn More" feature provides on-demand, specialized deep-dive analyses for specific aspects of the data:
+The deep-dive analysis feature provides specialized, in-depth analyses for specific aspects of the data:
 - **Client Relationship Analysis**: Detailed examination of the client's usage patterns and engagement with Reuters content
 - **Industry Context Analysis**: Analysis of how the client's usage compares to industry trends and standards
-- **Quantitative Analysis**: In-depth statistical analysis of the client's usage data
-- **Temporal Trends Analysis**: Detailed examination of how the client's usage has changed over time
-- **Recommendation Details**: Expanded recommendations with implementation strategies and expected outcomes
+- **Quantitative Analysis**: In-depth statistical analysis of the client's usage data with detailed metrics
 
 These deep-dive analyses are generated on-demand using the LiteLLM API, providing additional context and insights beyond the initial analysis. This feature is particularly useful for:
 - Preparing for client meetings with comprehensive background information

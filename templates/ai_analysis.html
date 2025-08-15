@@ -80,36 +80,6 @@
             color: #6c757d;
             margin-bottom: 1rem;
         }
-        .tab-content {
-            padding: 1.5rem;
-            background-color: #fff;
-            border: 1px solid #dee2e6;
-            border-top: none;
-            border-radius: 0 0 0.25rem 0.25rem;
-        }
-        .nav-tabs .nav-link {
-            font-weight: 500;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: #fff;
-            border-color: #dee2e6 #dee2e6 #fff;
-        }
-        .recommendations {
-            background-color: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 0.25rem;
-            margin-top: 1.5rem;
-        }
-        .recommendations h4 {
-            color: #0c5460;
-            margin-bottom: 1rem;
-        }
-        .recommendations ul {
-            padding-left: 1.5rem;
-        }
-        .recommendations li {
-            margin-bottom: 0.5rem;
-        }
         .executive-summary {
             background-color: #e9ecef;
             padding: 1.5rem;
@@ -119,6 +89,60 @@
         .executive-summary h4 {
             color: #0c5460;
             margin-bottom: 1rem;
+        }
+        .deep-dive-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .deep-dive-button {
+            flex: 1;
+            min-width: 200px;
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 0.5rem;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+        .deep-dive-button:hover {
+            background-color: #e9ecef;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .deep-dive-button h5 {
+            margin-bottom: 0.5rem;
+            color: #0c5460;
+        }
+        .deep-dive-button p {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        .deep-dive-button .btn {
+            width: 100%;
+        }
+        .deep-dive-content {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+        }
+        .deep-dive-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .deep-dive-header h4 {
+            margin-bottom: 0;
+            color: #0c5460;
+        }
+        .deep-dive-header .btn-close {
+            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -168,149 +192,85 @@
                                 <p>{{ analysis.executive_summary|safe }}</p>
                             </div>
                             
-                            <ul class="nav nav-tabs" id="aiTabs" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="audience-tab" data-bs-toggle="tab" data-bs-target="#audience" type="button" role="tab" aria-controls="audience" aria-selected="true">Insights by Audience</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="insight-tab" data-bs-toggle="tab" data-bs-target="#insight" type="button" role="tab" aria-controls="insight" aria-selected="false">Insights by Type</button>
-                                </li>
-                            </ul>
-                            <div class="tab-content" id="aiTabsContent">
-                                <div class="tab-pane fade show active" id="audience" role="tabpanel" aria-labelledby="audience-tab">
-                                    <div class="ai-section">
-                                        <div class="section-header d-flex justify-content-between align-items-center">
-                                            <h4>For Journalists and Producers</h4>
-                                            <button class="btn btn-sm btn-outline-primary learn-more-btn" 
-                                                    data-category="client_relationship" 
-                                                    data-session="{{ session_id }}" 
-                                                    data-channel="{{ analysis.channel_name }}">
-                                                Learn More
-                                            </button>
-                                        </div>
-                                        <div>{{ analysis.audience_insights.journalists_producers|safe }}</div>
-                                        <div class="deep-dive-content" id="deep-dive-client_relationship" style="display: none;">
-                                            <div class="loading-spinner text-center my-4">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                                <p class="mt-2">Generating detailed analysis...</p>
-                                            </div>
-                                            <div class="deep-dive-results mt-4 p-3 border-start border-4 border-primary bg-light"></div>
-                                        </div>
-                                    </div>
-                                    <div class="ai-section">
-                                        <div class="section-header d-flex justify-content-between align-items-center">
-                                            <h4>For Output Editors</h4>
-                                            <button class="btn btn-sm btn-outline-primary learn-more-btn" 
-                                                    data-category="industry_context" 
-                                                    data-session="{{ session_id }}" 
-                                                    data-channel="{{ analysis.channel_name }}">
-                                                Learn More
-                                            </button>
-                                        </div>
-                                        <div>{{ analysis.audience_insights.output_editors|safe }}</div>
-                                        <div class="deep-dive-content" id="deep-dive-industry_context" style="display: none;">
-                                            <div class="loading-spinner text-center my-4">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                                <p class="mt-2">Generating detailed analysis...</p>
-                                            </div>
-                                            <div class="deep-dive-results mt-4 p-3 border-start border-4 border-primary bg-light"></div>
-                                        </div>
-                                    </div>
-                                    <div class="ai-section">
-                                        <div class="section-header d-flex justify-content-between align-items-center">
-                                            <h4>For Marketing and Client-Facing Teams</h4>
-                                            <button class="btn btn-sm btn-outline-primary learn-more-btn" 
-                                                    data-category="quantitative_analysis" 
-                                                    data-session="{{ session_id }}" 
-                                                    data-channel="{{ analysis.channel_name }}">
-                                                Learn More
-                                            </button>
-                                        </div>
-                                        <div>{{ analysis.audience_insights.marketing_teams|safe }}</div>
-                                        <div class="deep-dive-content" id="deep-dive-quantitative_analysis" style="display: none;">
-                                            <div class="loading-spinner text-center my-4">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                                <p class="mt-2">Generating detailed analysis...</p>
-                                            </div>
-                                            <div class="deep-dive-results mt-4 p-3 border-start border-4 border-primary bg-light"></div>
-                                        </div>
-                                    </div>
+                            <h4 class="mb-3">Deep Dive Analysis Options</h4>
+                            <p class="mb-4">Select one of the following options to generate a specialized in-depth analysis:</p>
+                            
+                            <div class="deep-dive-buttons">
+                                <div class="deep-dive-button">
+                                    <h5>Client Relationship Analysis</h5>
+                                    <p>Detailed examination of client usage patterns and engagement with Reuters content</p>
+                                    <button class="btn btn-primary deep-dive-btn" 
+                                            data-category="client_relationship" 
+                                            data-session="{{ session_id }}" 
+                                            data-channel="{{ analysis.channel_name }}">
+                                        Generate Analysis
+                                    </button>
                                 </div>
-                                <div class="tab-pane fade" id="insight" role="tabpanel" aria-labelledby="insight-tab">
-                                    <div class="ai-section">
-                                        <div class="section-header d-flex justify-content-between align-items-center">
-                                            <h4>Content Strategy Insights</h4>
-                                            <button class="btn btn-sm btn-outline-primary learn-more-btn" 
-                                                    data-category="temporal_trends" 
-                                                    data-session="{{ session_id }}" 
-                                                    data-channel="{{ analysis.channel_name }}">
-                                                Learn More
-                                            </button>
-                                        </div>
-                                        <div>{{ analysis.insight_types.content_strategy|safe }}</div>
-                                        <div class="deep-dive-content" id="deep-dive-temporal_trends" style="display: none;">
-                                            <div class="loading-spinner text-center my-4">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                                <p class="mt-2">Generating detailed analysis...</p>
-                                            </div>
-                                            <div class="deep-dive-results mt-4 p-3 border-start border-4 border-primary bg-light"></div>
-                                        </div>
-                                    </div>
-                                    <div class="ai-section">
-                                        <div class="section-header d-flex justify-content-between align-items-center">
-                                            <h4>Client Engagement Insights</h4>
-                                            <button class="btn btn-sm btn-outline-primary learn-more-btn" 
-                                                    data-category="client_relationship" 
-                                                    data-session="{{ session_id }}" 
-                                                    data-channel="{{ analysis.channel_name }}">
-                                                Learn More
-                                            </button>
-                                        </div>
-                                        <div>{{ analysis.insight_types.client_engagement|safe }}</div>
-                                        <!-- We don't need to duplicate the deep-dive-client_relationship container as it's already in the audience tab -->
-                                    </div>
-                                    <div class="ai-section">
-                                        <div class="section-header d-flex justify-content-between align-items-center">
-                                            <h4>Market Positioning Insights</h4>
-                                            <button class="btn btn-sm btn-outline-primary learn-more-btn" 
-                                                    data-category="recommendation_details" 
-                                                    data-session="{{ session_id }}" 
-                                                    data-channel="{{ analysis.channel_name }}">
-                                                Learn More
-                                            </button>
-                                        </div>
-                                        <div>{{ analysis.insight_types.market_positioning|safe }}</div>
-                                        <div class="deep-dive-content" id="deep-dive-recommendation_details" style="display: none;">
-                                            <div class="loading-spinner text-center my-4">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                                <p class="mt-2">Generating detailed analysis...</p>
-                                            </div>
-                                            <div class="deep-dive-results mt-4 p-3 border-start border-4 border-primary bg-light"></div>
-                                        </div>
-                                    </div>
+                                
+                                <div class="deep-dive-button">
+                                    <h5>Industry Context Analysis</h5>
+                                    <p>Analysis of how client usage compares to industry trends and standards</p>
+                                    <button class="btn btn-primary deep-dive-btn" 
+                                            data-category="industry_context" 
+                                            data-session="{{ session_id }}" 
+                                            data-channel="{{ analysis.channel_name }}">
+                                        Generate Analysis
+                                    </button>
+                                </div>
+                                
+                                <div class="deep-dive-button">
+                                    <h5>Quantitative Analysis</h5>
+                                    <p>In-depth statistical analysis of client usage data with detailed metrics</p>
+                                    <button class="btn btn-primary deep-dive-btn" 
+                                            data-category="quantitative_analysis" 
+                                            data-session="{{ session_id }}" 
+                                            data-channel="{{ analysis.channel_name }}">
+                                        Generate Analysis
+                                    </button>
                                 </div>
                             </div>
                             
-                            <div class="recommendations">
-                                <h4>Actionable Recommendations</h4>
-                                <div>
-                                    {% if analysis.recommendations and "**" not in analysis.recommendations %}
-                                        {{ analysis.recommendations|safe }}
-                                    {% else %}
-                                        <p>Please regenerate the analysis to view the recommendations. The AI model may have been truncated during the initial generation.</p>
-                                        <a href="{{ url_for('generate_ai_analysis', session_id=session_id, channel_name=analysis.channel_name, regenerate=1) }}" class="btn btn-primary">Regenerate Analysis</a>
-                                    {% endif %}
+                            <!-- Deep Dive Content Containers -->
+                            <div class="deep-dive-content" id="deep-dive-client_relationship" style="display: none;">
+                                <div class="deep-dive-header">
+                                    <h4>Client Relationship Analysis</h4>
+                                    <button type="button" class="btn-close" aria-label="Close" onclick="hideDeepDive('client_relationship')"></button>
                                 </div>
+                                <div class="loading-spinner text-center my-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Generating detailed analysis...</p>
+                                </div>
+                                <div class="deep-dive-results mt-4"></div>
+                            </div>
+                            
+                            <div class="deep-dive-content" id="deep-dive-industry_context" style="display: none;">
+                                <div class="deep-dive-header">
+                                    <h4>Industry Context Analysis</h4>
+                                    <button type="button" class="btn-close" aria-label="Close" onclick="hideDeepDive('industry_context')"></button>
+                                </div>
+                                <div class="loading-spinner text-center my-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Generating detailed analysis...</p>
+                                </div>
+                                <div class="deep-dive-results mt-4"></div>
+                            </div>
+                            
+                            <div class="deep-dive-content" id="deep-dive-quantitative_analysis" style="display: none;">
+                                <div class="deep-dive-header">
+                                    <h4>Quantitative Analysis</h4>
+                                    <button type="button" class="btn-close" aria-label="Close" onclick="hideDeepDive('quantitative_analysis')"></button>
+                                </div>
+                                <div class="loading-spinner text-center my-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Generating detailed analysis...</p>
+                                </div>
+                                <div class="deep-dive-results mt-4"></div>
                             </div>
                         {% endif %}
                     </div>
@@ -356,53 +316,75 @@
     
     {% if not loading %}
     <script>
-        // Handle "Learn More" button clicks
-        document.addEventListener('DOMContentLoaded', function() {
-            const learnMoreButtons = document.querySelectorAll('.learn-more-btn');
+        // Function to hide deep dive content
+        function hideDeepDive(category) {
+            document.getElementById(`deep-dive-${category}`).style.display = 'none';
             
-            learnMoreButtons.forEach(button => {
+            // Reset the button text
+            const buttons = document.querySelectorAll('.deep-dive-btn');
+            buttons.forEach(button => {
+                if (button.getAttribute('data-category') === category) {
+                    button.textContent = 'Generate Analysis';
+                    button.disabled = false;
+                }
+            });
+        }
+        
+        // Handle deep dive button clicks
+        document.addEventListener('DOMContentLoaded', function() {
+            const deepDiveButtons = document.querySelectorAll('.deep-dive-btn');
+            
+            deepDiveButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const category = this.getAttribute('data-category');
                     const sessionId = this.getAttribute('data-session');
                     const channelName = this.getAttribute('data-channel');
                     const deepDiveContainer = document.getElementById(`deep-dive-${category}`);
                     
-                    // Toggle the deep dive content visibility
-                    if (deepDiveContainer.style.display === 'none') {
-                        deepDiveContainer.style.display = 'block';
-                        
-                        // Show loading spinner
-                        deepDiveContainer.querySelector('.loading-spinner').style.display = 'block';
-                        deepDiveContainer.querySelector('.deep-dive-results').innerHTML = '';
-                        
-                        // Make AJAX request to get deep dive analysis
-                        fetch(`/deep_dive/${category}/${sessionId}/${encodeURIComponent(channelName)}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                // Hide loading spinner
-                                deepDiveContainer.querySelector('.loading-spinner').style.display = 'none';
-                                
-                                if (data.error) {
-                                    deepDiveContainer.querySelector('.deep-dive-results').innerHTML = 
-                                        `<div class="alert alert-danger">${data.error}</div>`;
-                                } else {
-                                    // Display the deep dive content
-                                    deepDiveContainer.querySelector('.deep-dive-results').innerHTML = data.content;
-                                }
-                            })
-                            .catch(error => {
-                                // Hide loading spinner and show error
-                                deepDiveContainer.querySelector('.loading-spinner').style.display = 'none';
+                    // Show the deep dive content
+                    deepDiveContainer.style.display = 'block';
+                    
+                    // Scroll to the deep dive content
+                    deepDiveContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // Show loading spinner
+                    deepDiveContainer.querySelector('.loading-spinner').style.display = 'block';
+                    deepDiveContainer.querySelector('.deep-dive-results').innerHTML = '';
+                    
+                    // Disable the button while loading
+                    this.disabled = true;
+                    this.textContent = 'Generating...';
+                    
+                    // Make AJAX request to get deep dive analysis
+                    fetch(`/deep_dive/${category}/${sessionId}/${encodeURIComponent(channelName)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Hide loading spinner
+                            deepDiveContainer.querySelector('.loading-spinner').style.display = 'none';
+                            
+                            if (data.error) {
                                 deepDiveContainer.querySelector('.deep-dive-results').innerHTML = 
-                                    `<div class="alert alert-danger">Error loading deep dive analysis: ${error}</div>`;
-                            });
-                        
-                        // Change button text
-                        this.textContent = 'Hide Details';
-                    } else {
-                        deepDiveContainer.style.display = 'none';
-                        this.textContent = 'Learn More';
-                    }
+                                    `<div class="alert alert-danger">${data.error}</div>`;
+                                // Reset button
+                                this.disabled = false;
+                                this.textContent = 'Generate Analysis';
+                            } else {
+                                // Display the deep dive content
+                                deepDiveContainer.querySelector('.deep-dive-results').innerHTML = data.content;
+                                // Change button text
+                                this.textContent = 'Regenerate Analysis';
+                                this.disabled = false;
+                            }
+                        })
+                        .catch(error => {
+                            // Hide loading spinner and show error
+                            deepDiveContainer.querySelector('.loading-spinner').style.display = 'none';
+                            deepDiveContainer.querySelector('.deep-dive-results').innerHTML = 
+                                `<div class="alert alert-danger">Error loading deep dive analysis: ${error}</div>`;
+                            // Reset button
+                            this.disabled = false;
+                            this.textContent = 'Generate Analysis';
+                        });
                 });
             });
         });
