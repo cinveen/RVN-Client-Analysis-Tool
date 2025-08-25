@@ -26,7 +26,7 @@
         
         <div class="row mb-4">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card analysis-card">
                     <div class="card-header">
                         <h4>{{ analysis_title }}</h4>
                     </div>
@@ -87,13 +87,15 @@
         
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card analysis-card">
                     <div class="card-header">
                         <h4>Actions</h4>
                     </div>
                     <div class="card-body">
-                        <a href="{{ url_for('analyze', session_id=session_id) }}" class="btn btn-primary">Back to Analysis Dashboard</a>
-                        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Upload New Data</a>
+                        <div class="action-buttons-container">
+                            <a href="{{ url_for('analyze', session_id=session_id) }}" class="btn btn-primary action-btn">Back to Analysis Dashboard</a>
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary action-btn">Upload New Data</a>
+                        </div>
                     </div>
                 </div>
             </div>

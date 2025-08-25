@@ -676,6 +676,136 @@ def analyze_detection_lengths():
     
     return story_lengths
 
+def analyze_top_live_broadcasts():
+    """Analyze the most frequently detected live broadcasts (ADVISORY content)
+    
+    This function identifies and analyzes content with the "ADVISORY" prefix,
+    which indicates live broadcasts in Reuters video content. It creates
+    visualizations showing the top live broadcasts, their proportion compared
+    to regular content, and their distribution over time.
+    """
+    print("Analyzing top live broadcasts...")
+    
+    # Filter for live broadcasts (stories with "ADVISORY" prefix)
+    live_broadcasts = df[df['Slug line'].str.startswith('ADVISORY ', na=False)]
+    
+    if len(live_broadcasts) == 0:
+        print("No live broadcasts (ADVISORY content) found in the dataset")
+        
+        # Create a message image
+        plt.figure(figsize=(10, 6))
+        plt.text(0.5, 0.5, 'No live broadcasts (ADVISORY content) found in the dataset', 
+                ha='center', va='center', fontsize=16)
+        plt.axis('off')
+        plt.savefig('output/images/no_live_broadcasts.png', dpi=300)
+        plt.close()
+        
+        return None
+    
+    # Get top live broadcasts
+    top_live_broadcasts = live_broadcasts['Slug line'].value_counts().head(15)
+    
+    # Clean the labels to replace "ADVISORY " with "LIVE: "
+    clean_labels = [f"LIVE: {label[9:]}" for label in top_live_broadcasts.index]
+    
+    plt.figure(figsize=(12, 8))
+    bars = plt.barh(clean_labels[::-1], top_live_broadcasts.values[::-1], color=TR_ORANGE)
+    plt.title('Top 15 Most Detected Live Broadcasts', fontsize=16)
+    plt.xlabel('Number of Detections', fontsize=12)
+    plt.ylabel('Live Broadcast', fontsize=12)
+    plt.grid(True, alpha=0.3, axis='x')
+    
+    # Add count labels
+    for bar in bars:
+        width = bar.get_width()
+        plt.text(width + 5, bar.get_y() + bar.get_height()/2, 
+                f'{width:,.0f}', ha='left', va='center', fontsize=10)
+    
+    # Add explanatory note
+    plt.figtext(0.5, 0.01, 
+               "Note: 'ADVISORY' in Reuters video content indicates a live broadcast. These are displayed with the 'LIVE:' prefix for clarity.", 
+               ha='center', fontsize=10, style='italic')
+    
+    plt.tight_layout()
+    plt.savefig('output/images/top_live_broadcasts.png', dpi=300)
+    plt.close()
+    
+    # Interactive version
+    fig = px.bar(y=clean_labels[::-1], x=top_live_broadcasts.values[::-1], 
+                orientation='h', text=top_live_broadcasts.values[::-1],
+                labels={'y': 'Live Broadcast', 'x': 'Number of Detections'},
+                title='Top 15 Most Detected Live Broadcasts')
+    fig.update_layout(template='plotly_white')
+    fig.write_html('output/images/top_live_broadcasts_interactive.html')
+    
+    # Create a pie chart showing the proportion of live broadcasts vs. regular content
+    total_stories = len(df)
+    live_count = len(live_broadcasts)
+    regular_count = total_stories - live_count
+    
+    live_percentage = (live_count / total_stories) * 100
+    regular_percentage = (regular_count / total_stories) * 100
+    
+    plt.figure(figsize=(10, 8))
+    plt.pie([live_count, regular_count], 
+            labels=[f"Live Broadcasts\n{live_percentage:.1f}%", f"Regular Content\n{regular_percentage:.1f}%"], 
+            autopct='%1.1f%%', 
+            startangle=90, 
+            colors=[TR_ORANGE, TR_DARK_SKY],
+            wedgeprops={'edgecolor': 'white'})
+    plt.title("Proportion of Live Broadcasts vs. Regular Content", fontsize=16)
+    plt.axis('equal')
+    
+    plt.tight_layout()
+    plt.savefig('output/images/live_broadcast_proportion.png', dpi=300)
+    plt.close()
+    
+    # Interactive version
+    fig = px.pie(values=[live_count, regular_count], 
+                names=["Live Broadcasts", "Regular Content"],
+                title="Proportion of Live Broadcasts vs. Regular Content",
+                color_discrete_sequence=[TR_ORANGE, TR_DARK_SKY])
+    fig.update_layout(template='plotly_white')
+    fig.write_html('output/images/live_broadcast_proportion_interactive.html')
+    
+    # Create a time series of live broadcasts
+    live_broadcasts['Detection Date'] = live_broadcasts['UTC detection start'].dt.date
+    daily_live_counts = live_broadcasts.groupby('Detection Date').size()
+    
+    # Resample to fill in missing dates with zeros
+    date_range = pd.date_range(start=daily_live_counts.index.min(), end=daily_live_counts.index.max())
+    daily_live_counts = daily_live_counts.reindex(date_range, fill_value=0)
+    
+    # Calculate 30-day moving average
+    moving_avg = daily_live_counts.rolling(window=30).mean()
+    
+    plt.figure(figsize=(15, 7))
+    plt.plot(daily_live_counts.index, daily_live_counts.values, color=TR_DARK_SKY, alpha=0.5, label='Daily Live Broadcasts')
+    plt.plot(moving_avg.index, moving_avg.values, color=TR_ORANGE, linewidth=2, label='30-Day Moving Average')
+    plt.title('Live Broadcasts Over Time', fontsize=16)
+    plt.xlabel('Date', fontsize=12)
+    plt.ylabel('Number of Live Broadcast Detections', fontsize=12)
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    
+    # Format x-axis
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    plt.gca().xaxis.set_major_locator(mdates.YearLocator())
+    plt.xticks(rotation=45)
+    
+    plt.tight_layout()
+    plt.savefig('output/images/live_broadcasts_time_series.png', dpi=300)
+    plt.close()
+    
+    # Interactive version
+    fig = px.line(x=daily_live_counts.index, y=daily_live_counts.values, 
+                 labels={'x': 'Date', 'y': 'Number of Live Broadcast Detections'},
+                 title='Live Broadcasts Over Time',
+                 color_discrete_sequence=[TR_DARK_SKY])
+    fig.add_scatter(x=moving_avg.index, y=moving_avg.values, mode='lines', 
+                   name='30-Day Moving Average', line=dict(color=TR_ORANGE, width=2))
+    fig.update_layout
+
 def create_powerpoint_presentation(output_dir='output'):
     """Create a PowerPoint presentation with the analysis results
     
@@ -1653,6 +1783,7 @@ def main():
     top_stories, top_topics, channel_story_counts = analyze_top_stories()
     hourly_counts, weekday_counts, hour_day_counts = analyze_detection_patterns()
     story_lengths = analyze_detection_lengths()
+    live_broadcasts = analyze_top_live_broadcasts()
     
     # Create PowerPoint presentation
     create_powerpoint_presentation()

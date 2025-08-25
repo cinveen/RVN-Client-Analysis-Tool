@@ -6,6 +6,19 @@ This document provides a chronological list of recent updates, enhancements, and
 
 ### August 15, 2025
 
+#### Top Live Broadcasts Analysis Feature
+
+- **New Feature**: Added a dedicated analysis for live broadcasts (ADVISORY content)
+- **Enhancement**: Created a new dashboard button and analysis type specifically for live content
+- **Technical Details**:
+  - Added a new `top_live_broadcasts` analysis type to both web app and core analysis module
+  - Created visualizations showing top live broadcasts, proportion of live vs. regular content, and time series trends
+  - Implemented consistent "LIVE:" prefix display for all ADVISORY content
+  - Added interactive versions of all live broadcast visualizations
+- **Impact**: Users can now specifically analyze live broadcast usage patterns separately from regular content
+- **User Experience**: Provides deeper insights into how clients are using Reuters live content
+
+
 #### AI Analysis Hallucination Prevention Enhancement
 
 - **Enhancement**: Strengthened the AI analysis system to prevent hallucinations and fabricated statistics

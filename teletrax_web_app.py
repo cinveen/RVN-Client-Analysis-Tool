@@ -82,6 +82,79 @@ def allowed_file(filename):
 def index():
     return render_template('index.html')
 
+@app.route('/analyze/sample')
+def analyze_sample():
+    """Load sample data and redirect to the analyze page
+    
+    This function loads the sample data from Sample_Data/Sample_Teletrax_Data.xlsx
+    and creates a session for analysis.
+    
+    Returns:
+        Redirect to the analyze page with the session ID
+    """
+    # Create a unique session ID
+    session_id = str(uuid.uuid4())
+    
+    # Create session directory
+    session_dir = os.path.join(app.config['UPLOAD_FOLDER'], session_id)
+    os.makedirs(session_dir, exist_ok=True)
+    
+    # Create output directories for this session
+    output_dir = os.path.join('static', 'images', session_id)
+    os.makedirs(output_dir, exist_ok=True)
+    
+    try:
+        # Load the sample data
+        sample_file = os.path.join('Sample_Data', 'Sample_Teletrax_Data.xlsx')
+        df = pd.read_excel(sample_file)
+        
+        # Process datetime columns
+        datetime_cols = ['UTC detection start', 'Local detection start']
+        for col in datetime_cols:
+            if col in df.columns:
+                df[col] = pd.to_datetime(df[col])
+        
+        # Convert 'Actual detection length' to seconds
+        if 'Actual detection length' in df.columns:
+            df['Detection Length (seconds)'] = df['Actual detection length'].apply(timedelta_to_seconds)
+        
+        # Add derived columns for analysis
+        df['Detection Year'] = df['UTC detection start'].dt.year
+        df['Detection Month'] = df['UTC detection start'].dt.month
+        df['Detection Day'] = df['UTC detection start'].dt.day
+        df['Detection Hour'] = df['UTC detection start'].dt.hour
+        df['Detection Weekday'] = df['UTC detection start'].dt.day_name()
+        df['Detection Date'] = df['UTC detection start'].dt.date
+        
+        # Extract topic from slug line (handle NaN values)
+        df['Topic'] = df['Slug line'].apply(lambda x: x.split('-')[0] if pd.notna(x) and '-' in x else x.split('/')[0] if pd.notna(x) else '')
+        df['Subtopic'] = df['Slug line'].apply(lambda x: x.split('-')[1].split('/')[0] if pd.notna(x) and '-' in x and len(x.split('-')) > 1 else '')
+        
+        # Save processed data
+        processed_file = os.path.join(session_dir, 'processed_data.pkl')
+        df.to_pickle(processed_file)
+        
+        # Save file processing information
+        file_info = [{
+            'filename': 'Sample_Teletrax_Data.xlsx',
+            'status': 'success',
+            'records': len(df),
+            'channels': ', '.join(df['Channel: Name'].unique())
+        }]
+        
+        file_info_path = os.path.join(session_dir, 'file_info.json')
+        with open(file_info_path, 'w') as f:
+            json.dump(file_info, f)
+        
+        flash(f"Successfully loaded sample data with {len(df)} records.")
+        
+        # Redirect to analysis page
+        return redirect(url_for('analyze', session_id=session_id))
+        
+    except Exception as e:
+        flash(f"Error loading sample data: {str(e)}")
+        return redirect(url_for('index'))
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:

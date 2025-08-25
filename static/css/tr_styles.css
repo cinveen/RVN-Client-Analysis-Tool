@@ -167,29 +167,94 @@ body {
     margin-bottom: 1rem;
 }
 
-.card-title {
+/* Enhanced card styles with subtle hover effects */
+.analysis-card {
+    transition: all 0.3s ease;
+    height: 100%;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+    background-color: var(--tr-white);
+}
+
+.analysis-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.analysis-card .card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-title, .analysis-card .card-title {
     font-family: 'Clario', Arial, sans-serif;
     font-weight: 500; /* Medium weight for headlines */
     font-size: var(--subhead-size);
     line-height: var(--small-line-height);
+    color: var(--tr-racing-green);
+    margin-bottom: 0.75rem;
 }
 
-.card-text {
+.card-text, .analysis-card .card-text {
     font-family: 'Clario', Arial, sans-serif;
     font-weight: 400; /* Regular weight for body copy */
     line-height: var(--small-line-height);
+    flex-grow: 1;
+    margin-bottom: 1rem;
+    color: #6c757d;
 }
 
 .card-header {
     background-color: var(--tr-racing-green);
     color: var(--tr-white);
+    font-weight: 500;
 }
 
 .card-body {
     background-color: var(--tr-light-sky);
 }
 
+.analysis-card .btn {
+    transition: all 0.3s ease;
+    /* Removed width: 100% to prevent full-width stretching */
+    max-width: 100%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.analysis-card .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Special case for buttons that should remain full width */
+.analysis-card .btn.btn-full-width {
+    width: 100%;
+}
+
 /* Button Styles */
+.btn {
+    transition: all 0.3s ease;
+}
+
+/* Action buttons styling for bottom of pages */
+.action-btn {
+    display: inline-block;
+    min-width: 150px;
+    max-width: 250px;
+    margin: 0.5rem;
+}
+
+.action-buttons-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: -0.5rem; /* Counteract the margin of child elements */
+}
+
 .btn-primary {
     background-color: var(--tr-orange);
     border-color: var(--tr-orange);
@@ -198,16 +263,20 @@ body {
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
     background-color: var(--tr-dark-amber) !important;
     border-color: var(--tr-dark-amber) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .btn-success {
-    background-color: var(--tr-racing-green);
-    border-color: var(--tr-racing-green);
+    background-color: var(--tr-orange); /* Changed to match AI page */
+    border-color: var(--tr-orange);
 }
 
 .btn-success:hover, .btn-success:focus, .btn-success:active {
-    background-color: #1a4620 !important;
-    border-color: #1a4620 !important;
+    background-color: var(--tr-dark-amber) !important;
+    border-color: var(--tr-dark-amber) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .btn-secondary {
@@ -218,17 +287,101 @@ body {
 .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active {
     background-color: #0666c9 !important;
     border-color: #0666c9 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .btn-outline-primary {
     color: var(--tr-orange);
     border-color: var(--tr-orange);
+    background-color: var(--tr-white); /* Ensure background is white for better contrast */
+    font-weight: 500; /* Make text more visible with medium weight */
 }
 
-.btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
+.btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active, .btn-outline-primary.active {
     background-color: var(--tr-orange) !important;
     border-color: var(--tr-orange) !important;
     color: var(--tr-white) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Ensure active state is properly styled */
+.btn-outline-primary.active {
+    background-color: var(--tr-orange) !important;
+    border-color: var(--tr-orange) !important;
+    color: var(--tr-white) !important;
+}
+
+/* Button group styling */
+.btn-group .btn {
+    transition: all 0.3s ease;
+}
+
+/* Default styling for solid buttons in button groups */
+.btn-group .btn-primary {
+    background-color: var(--tr-orange);
+    border-color: var(--tr-orange);
+}
+
+/* Specific styling for outline buttons in button groups */
+.btn-group .btn-outline-primary {
+    background-color: var(--tr-white);
+    color: var(--tr-orange);
+    border-color: var(--tr-orange);
+    font-weight: 500;
+}
+
+/* Active state for outline buttons in button groups */
+.btn-group .btn-outline-primary.active {
+    background-color: var(--tr-orange);
+    color: var(--tr-white);
+    border-color: var(--tr-orange);
+}
+
+/* Regular button in button group */
+.btn-group .btn:not(.dropdown-toggle-split) {
+    padding-right: 1rem;
+}
+
+/* Dropdown toggle button styling */
+.btn-group .dropdown-toggle-split {
+    position: relative;
+    background-color: var(--tr-dark-amber);
+    border-color: var(--tr-dark-amber);
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+/* Add a permanent visual indicator for dropdown toggles */
+.btn-group .dropdown-toggle-split::after {
+    display: inline-block;
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+    opacity: 1;
+}
+
+/* Hover states for buttons in button groups */
+.btn-group .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Different hover color for main button vs dropdown toggle */
+.btn-group .btn:not(.dropdown-toggle-split):hover {
+    background-color: var(--tr-dark-amber);
+    border-color: var(--tr-dark-amber);
+}
+
+/* Different hover color for dropdown toggle */
+.btn-group .dropdown-toggle-split:hover {
+    background-color: var(--tr-racing-green);
+    border-color: var(--tr-racing-green);
 }
 
 /* Form Controls */
@@ -296,4 +449,163 @@ strong, b {
 em, i, u {
     font-style: normal;
     text-decoration: none;
+}
+
+/* AI Analysis Styles */
+.ai-section {
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--tr-dark-teal);
+    padding-left: 1rem;
+}
+
+.ai-section h4 {
+    color: var(--tr-dark-teal);
+    margin-bottom: 1rem;
+}
+
+.ai-loading {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.ai-loading .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.ai-badge {
+    background-color: var(--tr-dark-teal);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+}
+
+/* Markdown formatting styles */
+.ai-list {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.ai-list li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.ai-heading {
+    color: var(--tr-dark-teal);
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.ai-paragraph {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+/* Fix for nested lists */
+.ai-list .ai-list {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.ai-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.ai-header h3 {
+    margin-bottom: 0;
+    margin-left: 0.5rem;
+}
+
+.ai-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.ai-timestamp {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.executive-summary {
+    background-color: #e9ecef;
+    padding: 1.5rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.executive-summary h4 {
+    color: var(--tr-dark-teal);
+    margin-bottom: 1rem;
+}
+
+/* Deep dive components */
+.deep-dive-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.deep-dive-button {
+    flex: 1;
+    min-width: 200px;
+    padding: 1.5rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.deep-dive-button:hover {
+    background-color: #e9ecef;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.deep-dive-button h5 {
+    margin-bottom: 0.5rem;
+    color: var(--tr-dark-teal);
+}
+
+.deep-dive-button p {
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.deep-dive-button .btn {
+    width: 100%;
+}
+
+.deep-dive-content {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.deep-dive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.deep-dive-header h4 {
+    margin-bottom: 0;
+    color: var(--tr-dark-teal);
+}
+
+.deep-dive-header .btn-close {
+    font-size: 0.8rem;
 }

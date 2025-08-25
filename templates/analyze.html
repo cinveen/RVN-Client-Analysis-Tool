@@ -26,7 +26,7 @@
         
         <div class="row mb-4">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card analysis-card">
                     <div class="card-header">
                         <h4>Data Overview</h4>
                     </div>
@@ -92,50 +92,59 @@
         
         <div class="row mb-4">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card analysis-card">
                     <div class="card-header">
                         <h4>Available Analyses</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <div class="card">
+                                <div class="card analysis-card">
                                     <div class="card-body">
                                         <h5 class="card-title">Time Series Analysis</h5>
                                         <p class="card-text">Analyze detection trends over time</p>
-                                        <a href="{{ url_for('generate_analysis', analysis_type='time_series', session_id=session_id) }}" class="btn btn-primary">Generate</a>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='time_series', session_id=session_id) }}" class="btn btn-primary btn-full-width">Generate</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <div class="card">
+                                <div class="card analysis-card">
                                     <div class="card-body">
                                         <h5 class="card-title">Top Stories Analysis</h5>
                                         <p class="card-text">Identify the most frequently detected stories</p>
-                                        <a href="{{ url_for('generate_analysis', analysis_type='top_stories', session_id=session_id) }}" class="btn btn-primary">Generate</a>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='top_stories', session_id=session_id) }}" class="btn btn-primary btn-full-width">Generate</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <div class="card">
+                                <div class="card analysis-card">
                                     <div class="card-body">
                                         <h5 class="card-title">Detection Patterns</h5>
                                         <p class="card-text">Analyze patterns by hour of day and day of week</p>
-                                        <a href="{{ url_for('generate_analysis', analysis_type='detection_patterns', session_id=session_id) }}" class="btn btn-primary">Generate</a>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='detection_patterns', session_id=session_id) }}" class="btn btn-primary btn-full-width">Generate</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <div class="card">
+                                <div class="card analysis-card">
                                     <div class="card-body">
                                         <h5 class="card-title">Top Themes</h5>
                                         <p class="card-text">Identify the most frequently covered thematic areas based on master slugs</p>
-                                        <a href="{{ url_for('generate_analysis', analysis_type='top_themes', session_id=session_id) }}" class="btn btn-primary">Generate</a>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='top_themes', session_id=session_id) }}" class="btn btn-primary btn-full-width">Generate</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <div class="card">
+                                <div class="card analysis-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Top Live Broadcasts</h5>
+                                        <p class="card-text">Identify the most frequently detected live broadcasts (ADVISORY content)</p>
+                                        <a href="{{ url_for('generate_analysis', analysis_type='top_live_broadcasts', session_id=session_id) }}" class="btn btn-primary btn-full-width">Generate</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card analysis-card">
                                     <div class="card-body">
                                         <h5 class="card-title">Channel Comparison</h5>
                                         <p class="card-text">Compare usage patterns between channels</p>
@@ -153,16 +162,16 @@
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <div class="card">
+                                <div class="card analysis-card">
                                     <div class="card-body">
                                         <h5 class="card-title">Generate All</h5>
                                         <p class="card-text">Generate all analyses and create PowerPoint</p>
-                                        <a href="{{ url_for('generate_all_analyses', session_id=session_id) }}" class="btn btn-success">Generate All</a>
+                                        <a href="{{ url_for('generate_all_analyses', session_id=session_id) }}" class="btn btn-success btn-full-width">Generate All</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <div class="card">
+                                <div class="card analysis-card">
                                     <div class="card-body">
                                         <h5 class="card-title">AI-Powered Insights</h5>
                                         <p class="card-text">Generate AI analysis for a specific channel</p>
@@ -186,52 +195,47 @@
         </div>
         
         <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card">
+            <div class="col-md-6">
+                <div class="card analysis-card">
                     <div class="card-header">
-                        <h4>Single-Slide PowerPoint (Channel-Specific)</h4>
+                        <h4>Single-Slide PowerPoint</h4>
                     </div>
                     <div class="card-body">
-                        <p>Generate a simple single-slide PowerPoint for a specific channel, similar to the sample slides:</p>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <select id="channelSelect" class="form-select mb-3">
-                                    <option value="" selected disabled>Select a channel</option>
-                                    {% for channel in stats.channels.split(', ') %}
-                                        <option value="{{ channel }}">{{ channel }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-check form-switch mb-3">
-                                    <input class="form-check-input" type="checkbox" id="clientFriendlyToggle">
-                                    <label class="form-check-label" for="clientFriendlyToggle">Client-Friendly Version</label>
-                                    <small class="form-text text-muted d-block">Focuses on positive trends and growth periods</small>
-                                </div>
-                                <button id="generateSingleSlide" class="btn btn-primary" disabled>Generate Single-Slide PowerPoint</button>
+                        <p>Generate a simple single-slide PowerPoint for a specific channel:</p>
+                        <div class="mb-3">
+                            <select id="channelSelect" class="form-select mb-3">
+                                <option value="" selected disabled>Select a channel</option>
+                                {% for channel in stats.channels.split(', ') %}
+                                    <option value="{{ channel }}">{{ channel }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="clientFriendlyToggle">
+                                <label class="form-check-label" for="clientFriendlyToggle">Client-Friendly Version</label>
+                                <small class="form-text text-muted d-block">Focuses on positive trends and growth periods</small>
                             </div>
                         </div>
-                        <div id="downloadSingleSlide" style="display: none; margin-top: 15px;">
-                            <p>Your single-slide PowerPoint is ready:</p>
-                            <a id="downloadSingleSlideLink" href="#" class="btn btn-success">Download Single-Slide PowerPoint</a>
-                        </div>
+                        <button id="generateSingleSlide" class="btn btn-primary btn-full-width" disabled>Generate Single-Slide PowerPoint</button>
                         
-                        <!-- No additional links needed as the dropdown and generate button above handle this functionality -->
+                        <div id="downloadSingleSlide" class="mt-3" style="display: none;">
+                            <p>Your single-slide PowerPoint is ready:</p>
+                            <a id="downloadSingleSlideLink" href="#" class="btn btn-success btn-full-width">Download Single-Slide PowerPoint</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                <div class="card-header">
-                    <h4>Full Report PowerPoint</h4>
-                </div>
+            
+            <div class="col-md-6">
+                <div class="card analysis-card">
+                    <div class="card-header">
+                        <h4>Full Report PowerPoint</h4>
+                    </div>
                     <div class="card-body">
                         <p>After generating all analyses, you can download the PowerPoint presentation:</p>
-                        <a href="{{ url_for('download_report', session_id=session_id) }}" class="btn btn-primary">Download PowerPoint</a>
-                        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Upload New Data</a>
+                        <a href="{{ url_for('download_report', session_id=session_id) }}" class="btn btn-primary btn-full-width mb-3">Download PowerPoint</a>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary btn-full-width">Upload New Data</a>
                     </div>
                 </div>
             </div>

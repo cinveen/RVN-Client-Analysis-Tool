@@ -167,11 +167,16 @@ The tool provides the following types of analysis:
 2. **Top Stories Analysis**: Identify the most frequently detected stories
    - **By Story ID + Headline**: Organize stories by their unique ID and headline for precise identification
    - **By Slug Line**: Organize stories by their slug line for traditional identification
-3. **Detection Patterns**: Analyze patterns by hour of day and day of week
-4. **Detection Lengths**: Analyze the distribution of detection lengths
-5. **Channel Comparison**: Compare usage patterns between channels
-6. **Single-Slide Channel Analysis**: Generate a focused single-slide PowerPoint for a specific channel
-7. **AI-Powered Analysis**: Generate detailed insights and recommendations using Claude Sonnet 4
+3. **Top Themes Analysis**: Identify the most frequently covered thematic areas based on master slugs
+4. **Top Live Broadcasts Analysis**: Identify and analyze the most frequently detected live broadcasts (ADVISORY content)
+   - **Live Broadcast Rankings**: Shows the top 15 most detected live broadcasts
+   - **Live vs. Regular Content**: Visualizes the proportion of live broadcasts compared to regular content
+   - **Live Broadcast Trends**: Tracks live broadcast detections over time with a 30-day moving average
+5. **Detection Patterns**: Analyze patterns by hour of day and day of week
+6. **Detection Lengths**: Analyze the distribution of detection lengths
+7. **Channel Comparison**: Compare usage patterns between channels
+8. **Single-Slide Channel Analysis**: Generate a focused single-slide PowerPoint for a specific channel
+9. **AI-Powered Analysis**: Generate detailed insights and recommendations using Claude Sonnet 4
    - **Audience-Specific Insights**: Tailored for journalists, editors, and marketing teams
    - **Insight Categories**: Content strategy, client engagement, and market positioning
    - **Actionable Recommendations**: Specific suggestions based on data patterns
