@@ -1944,7 +1944,8 @@ def download_ai_analysis(session_id, channel_name):
     """Download the AI-powered analysis as a PDF
     
     This function generates a PDF version of the AI-powered analysis for a specific
-    channel and provides it for download.
+    channel and provides it for download. It includes the executive summary and any
+    deep dive analyses that have been generated.
     
     Args:
         session_id (str): Unique session ID for the current analysis
@@ -1971,26 +1972,38 @@ def download_ai_analysis(session_id, channel_name):
     
     # Convert markdown to HTML for better formatting in PDF
     analysis_content = {
-        'executive_summary': convert_markdown_to_html(analysis['executive_summary']),
-        'audience_insights': {
-            'journalists_producers': convert_markdown_to_html(analysis['audience_insights']['journalists_producers']),
-            'output_editors': convert_markdown_to_html(analysis['audience_insights']['output_editors']),
-            'marketing_teams': convert_markdown_to_html(analysis['audience_insights']['marketing_teams'])
-        },
-        'insight_types': {
-            'content_strategy': convert_markdown_to_html(analysis['insight_types']['content_strategy']),
-            'client_engagement': convert_markdown_to_html(analysis['insight_types']['client_engagement']),
-            'market_positioning': convert_markdown_to_html(analysis['insight_types']['market_positioning'])
-        },
-        'recommendations': convert_markdown_to_html(analysis['recommendations'])
+        'executive_summary': convert_markdown_to_html(analysis['executive_summary'])
     }
+    
+    # Check for deep dive analyses that have been generated
+    deep_dive_categories = [
+        'client_relationship',
+        'industry_context',
+        'quantitative_analysis',
+        'editorial_insights',
+        'marketing_insights'
+    ]
+    
+    # Dictionary to store deep dive analyses that exist
+    deep_dive_analyses = {}
+    
+    # Check each deep dive category
+    for category in deep_dive_categories:
+        deep_dive_file = os.path.join(session_dir, f'deep_dive_{category}_{channel_name}.json')
+        if os.path.exists(deep_dive_file):
+            try:
+                with open(deep_dive_file, 'r') as f:
+                    deep_dive = json.load(f)
+                    deep_dive_analyses[category] = convert_markdown_to_html(deep_dive['content'])
+            except Exception as e:
+                print(f"Error loading deep dive analysis for {category}: {str(e)}")
     
     # Generate a PDF file
     try:
         # Import necessary libraries
         from reportlab.lib.pagesizes import letter
         from reportlab.lib import colors
-        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
         from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
         from reportlab.lib.units import inch
         
@@ -2021,39 +2034,30 @@ def download_ai_analysis(session_id, channel_name):
         content.append(Paragraph(analysis_content['executive_summary'], styles['Normal']))
         content.append(Spacer(1, 0.25*inch))
         
-        # Insights by Audience
-        content.append(Paragraph("Insights by Audience", styles['Heading2']))
-        
-        content.append(Paragraph("For Journalists and Producers", styles['Heading2']))
-        content.append(Paragraph(analysis_content['audience_insights']['journalists_producers'], styles['Normal']))
-        content.append(Spacer(1, 0.1*inch))
-        
-        content.append(Paragraph("For Output Editors", styles['Heading2']))
-        content.append(Paragraph(analysis_content['audience_insights']['output_editors'], styles['Normal']))
-        content.append(Spacer(1, 0.1*inch))
-        
-        content.append(Paragraph("For Marketing and Client-Facing Teams", styles['Heading2']))
-        content.append(Paragraph(analysis_content['audience_insights']['marketing_teams'], styles['Normal']))
-        content.append(Spacer(1, 0.25*inch))
-        
-        # Insights by Type
-        content.append(Paragraph("Insights by Type", styles['Heading2']))
-        
-        content.append(Paragraph("Content Strategy Insights", styles['Heading2']))
-        content.append(Paragraph(analysis_content['insight_types']['content_strategy'], styles['Normal']))
-        content.append(Spacer(1, 0.1*inch))
-        
-        content.append(Paragraph("Client Engagement Insights", styles['Heading2']))
-        content.append(Paragraph(analysis_content['insight_types']['client_engagement'], styles['Normal']))
-        content.append(Spacer(1, 0.1*inch))
-        
-        content.append(Paragraph("Market Positioning Insights", styles['Heading2']))
-        content.append(Paragraph(analysis_content['insight_types']['market_positioning'], styles['Normal']))
-        content.append(Spacer(1, 0.25*inch))
-        
-        # Recommendations
-        content.append(Paragraph("Actionable Recommendations", styles['Heading2']))
-        content.append(Paragraph(analysis_content['recommendations'], styles['Normal']))
+        # Add deep dive analyses if they exist
+        if deep_dive_analyses:
+            # Map category names to display names
+            category_display_names = {
+                'client_relationship': 'Client Relationship Analysis',
+                'industry_context': 'Industry Context Analysis',
+                'quantitative_analysis': 'Quantitative Analysis',
+                'editorial_insights': 'Editorial Insights',
+                'marketing_insights': 'Marketing Insights'
+            }
+            
+            # Add each deep dive analysis that exists
+            for category, content_html in deep_dive_analyses.items():
+                # Add a page break before each deep dive analysis
+                content.append(PageBreak())
+                
+                # Add the deep dive title
+                display_name = category_display_names.get(category, category.replace('_', ' ').title())
+                content.append(Paragraph(f"Deep Dive: {display_name}", styles['Heading1']))
+                content.append(Spacer(1, 0.1*inch))
+                
+                # Add the deep dive content
+                content.append(Paragraph(content_html, styles['Normal']))
+                content.append(Spacer(1, 0.25*inch))
         
         # Build the PDF
         doc.build(content)

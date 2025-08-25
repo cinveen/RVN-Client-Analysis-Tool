@@ -4,6 +4,21 @@ This document provides a chronological list of recent updates, enhancements, and
 
 ## August 2025
 
+### August 25, 2025
+
+#### AI Analysis PDF Generation Fix
+
+- **Bug Fix**: Fixed an issue where the PDF download of AI analysis included old, removed content
+- **Enhancement**: Modified the PDF generation to only include the executive summary and any deep dive analyses that have been specifically generated
+- **Technical Details**:
+  - Updated the `download_ai_analysis` function to check for the existence of deep dive analysis files
+  - Removed code that was including old sections from the main AI analysis file
+  - Added page breaks between different analyses for better readability
+  - Implemented a more organized structure with clear section headers
+- **Impact**: PDF downloads now accurately reflect what has been generated in the dashboard
+- **User Experience**: Eliminates confusion from seeing old content in PDFs and prevents wasting resources generating unwanted analyses
+
+
 ### August 15, 2025
 
 #### Top Live Broadcasts Analysis Feature
