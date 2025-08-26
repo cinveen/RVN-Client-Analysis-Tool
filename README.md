@@ -14,6 +14,7 @@ This project provides tools to analyze client data, which tracks the usage of Re
 - **PowerPoint Generation**: Automatically generate PowerPoint presentations with key findings
 - **Single-Slide PowerPoint**: Create channel-specific single-slide PowerPoints for quick presentations
 - **Web Interface**: Upload and analyze client data through a user-friendly web interface with Thomson Reuters branding
+- **Session Management**: Access previous analysis sessions, delete old sessions, and clear cache to manage disk space
 - **Story ID + Headline Organization**: View stories organized by both Story ID + Headline and by Slug Line for better identification
 - **Interactive Visualizations**: Explore data through interactive HTML visualizations
 - **Thomson Reuters Branding**: Consistent application of Thomson Reuters brand colors across the interface, visualizations, and PowerPoint presentations
